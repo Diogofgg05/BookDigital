@@ -1,0 +1,61 @@
+/*CSS reset*/
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.form-cad-usuario {
+    padding: 100px 0 0 0;
+    position: relative;
+    text-align: center;
+}
+
+.home {
+    background: url('../images/biblioteca_.png') no-repeat center 0; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    width: 100%;
+    height: 94.6%;
+    min-height: 360px;
+    top: 0;
+    left: 0;
+}
+
+.form-esqueci-minha-senha {
+    margin-left: 8.3rem;
+    text-decoration: none;
+}
+
+.form-esqueci-minha-senha a {
+    text-decoration: none !important;
+}
+
+.form-esqueci-minha-senha a:hover {
+    color: #6DA741;
+    text-decoration: none;
+}
+
+#card-style {
+    width: 36rem;
+    height: 42rem; 
+    border-radius: 15px;
+}
+
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
+}
+

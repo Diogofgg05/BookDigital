@@ -6,7 +6,6 @@ if(administrador_logado() == false) {header("location: /index.php"); exit;}
 
 include('../../../layout/header.html');
 include('../../../layout/navbar.php');
-include("../../../recursos.php");
 ?>
 
 <!DOCTYPE html>
@@ -19,172 +18,93 @@ include("../../../recursos.php");
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-50: #f8fafc;
-            --primary-100: #f1f5f9;
-            --primary-200: #e2e8f0;
-            --primary-300: #cbd5e1;
-            --primary-400: #94a3b8;
-            --primary-500: #64748b;
-            --primary-600: #475569;
-            --primary-700: #334155;
-            --primary-800: #1e293b;
-            --primary-900: #0f172a;
-            
-            --success-50: #f0fdf4;
-            --success-100: #dcfce7;
-            --success-500: #22c55e;
-            --success-600: #16a34a;
-            
-            --warning-50: #fffbeb;
-            --warning-100: #fef3c7;
-            --warning-500: #f59e0b;
-            --warning-600: #d97706;
-            
-            --danger-50: #fef2f2;
-            --danger-100: #fee2e2;
-            --danger-500: #ef4444;
-            --danger-600: #dc2626;
-            
-            --surface: #ffffff;
-            --surface-elevated: #fafafa;
-            --border: #e5e7eb;
-            --border-light: #f1f5f9;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --text-tertiary: #9ca3af;
-            
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        * {
-            box-sizing: border-box;
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --border-color: #ecf0f1;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
         }
         
         body {
-            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
-            color: var(--text-primary);
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
         }
         
-        .page-container {
+        .library-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 20px;
         }
         
-        /* Header Elegante */
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-        
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            border-radius: 2px;
-        }
-        
-        .page-title {
-            font-size: 2.5rem;
+        .library-title {
+            font-size: 1.75rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.025em;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
         }
         
-        .page-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-            max-width: 500px;
-            margin: 0 auto;
+        .library-subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
         }
         
-        /* Cards de Estatísticas Modernos */
-        .stats-container {
+        /* Cards de Estatísticas - Estilo Minimalista */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         
         .stat-card {
-            background: var(--surface);
-            padding: 2rem 1.5rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .stat-card.total::before { background: linear-gradient(90deg, var(--primary-400), var(--primary-600)); }
-        .stat-card.disponiveis::before { background: linear-gradient(90deg, var(--success-500), var(--success-600)); }
-        .stat-card.emprestados::before { background: linear-gradient(90deg, var(--warning-500), var(--warning-600)); }
-        .stat-card.indisponiveis::before { background: linear-gradient(90deg, var(--danger-500), var(--danger-600)); }
-        
-        .stat-content {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 1rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
+            font-size: 1.25rem;
         }
         
         .stat-card.total .stat-icon { 
-            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
-            color: var(--primary-600);
+            background: rgba(44, 62, 80, 0.08);
+            color: var(--primary-color);
         }
         .stat-card.disponiveis .stat-icon { 
-            background: linear-gradient(135deg, var(--success-100), var(--success-50));
-            color: var(--success-600);
+            background: rgba(39, 174, 96, 0.08);
+            color: var(--success-color);
         }
         .stat-card.emprestados .stat-icon { 
-            background: linear-gradient(135deg, var(--warning-100), var(--warning-50));
-            color: var(--warning-600);
+            background: rgba(243, 156, 18, 0.08);
+            color: var(--warning-color);
         }
         .stat-card.indisponiveis .stat-icon { 
-            background: linear-gradient(135deg, var(--danger-100), var(--danger-50));
-            color: var(--danger-600);
+            background: rgba(231, 76, 60, 0.08);
+            color: var(--error-color);
         }
         
         .stat-text {
@@ -192,44 +112,39 @@ include("../../../recursos.php");
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-color);
             line-height: 1;
             margin-bottom: 0.25rem;
         }
         
         .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            font-size: 0.85rem;
+            color: #7f8c8d;
             font-weight: 500;
         }
         
-        /* Barra de Pesquisa Elegante */
-        .search-section {
-            max-width: 600px;
-            margin: 0 auto 3rem;
-        }
-        
+        /* Barra de Pesquisa Minimalista */
         .search-container {
             position: relative;
+            margin-bottom: 2rem;
         }
         
         .search-input {
             width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            background: var(--surface);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: var(--white);
+            transition: all 0.2s ease;
         }
         
         .search-input:focus {
             outline: none;
-            border-color: var(--primary-400);
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
         }
         
         .search-icon {
@@ -237,51 +152,39 @@ include("../../../recursos.php");
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-tertiary);
-            font-size: 1.1rem;
+            color: #7f8c8d;
+            font-size: 1rem;
         }
         
-        /* Lista de Livros Ultra Moderna */
+        /* Grid de Livros Minimalista */
         .books-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
         
         .book-card {
-            background: var(--surface);
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
             overflow: hidden;
-            position: relative;
         }
         
         .book-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
         
         .book-card.unavailable {
-            opacity: 0.7;
-        }
-        
-        .book-card.unavailable::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(239, 68, 68, 0.02);
-            pointer-events: none;
+            opacity: 0.8;
         }
         
         .book-header {
-            padding: 1.5rem 1.5rem 1rem;
-            border-bottom: 1px solid var(--border-light);
+            padding: 1.25rem 1.25rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .book-main-info {
@@ -292,82 +195,67 @@ include("../../../recursos.php");
         }
         
         .book-cover {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
         }
         
-        .book-card.unavailable .book-cover {
-            background: linear-gradient(135deg, var(--primary-300), var(--primary-400));
-        }
-        
         .book-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-color);
             line-height: 1.4;
             margin-bottom: 0.5rem;
         }
         
-        .book-card.unavailable .book-title {
-            color: var(--text-secondary);
-        }
-        
         .book-isbn {
-            background: var(--primary-50);
-            color: var(--primary-600);
+            background: var(--light-bg);
+            color: var(--primary-color);
             padding: 0.25rem 0.5rem;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 500;
             display: inline-block;
         }
         
         .book-details {
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.25rem;
         }
         
         .book-meta {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
         }
         
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #7f8c8d;
         }
         
         .meta-item i {
             width: 16px;
-            color: var(--text-tertiary);
-            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-size: 0.85rem;
         }
         
         .book-footer {
-            padding: 1rem 1.5rem 1.5rem;
-            border-top: 1px solid var(--border-light);
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        
-        .stock-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
         }
         
         .stock-badge {
@@ -381,26 +269,26 @@ include("../../../recursos.php");
         }
         
         .stock-available {
-            background: var(--success-50);
-            color: var(--success-600);
-            border: 1px solid var(--success-100);
+            background: rgba(39, 174, 96, 0.08);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.2);
         }
         
         .stock-unavailable {
-            background: var(--danger-50);
-            color: var(--danger-600);
-            border: 1px solid var(--danger-100);
+            background: rgba(231, 76, 60, 0.08);
+            color: var(--error-color);
+            border: 1px solid rgba(231, 76, 60, 0.2);
         }
         
         .loan-button {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 10px;
+            padding: 0.625rem 1.25rem;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -409,426 +297,348 @@ include("../../../recursos.php");
         }
         
         .loan-button:hover {
+            background: var(--secondary-color);
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-            color: white;
-            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
         }
         
         .loan-button:disabled {
-            background: var(--primary-200);
-            color: var(--text-tertiary);
+            background: #bdc3c7;
+            color: #7f8c8d;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
         
-        /* Estado Vazio */
+        /* Estado Vazio Minimalista */
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
-            background: var(--surface);
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-light);
+            padding: 3rem 2rem;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
         }
         
         .empty-icon {
-            font-size: 4rem;
-            color: var(--primary-300);
-            margin-bottom: 1.5rem;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            opacity: 0.5;
         }
         
         .empty-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
         }
         
         .empty-text {
-            font-size: 1rem;
-            color: var(--text-secondary);
+            font-size: 0.95rem;
+            color: #7f8c8d;
             max-width: 400px;
             margin: 0 auto;
         }
-
-        /* Modal Moderno e Funcional */
+        
+        /* Modal Minimalista */
         .loan-modal .modal-content {
             border: none;
-            border-radius: 20px;
-            box-shadow: var(--shadow-xl);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             overflow: hidden;
         }
         
         .loan-modal .modal-header {
-            background: linear-gradient(135deg, var(--primary-50), var(--surface));
-            border-bottom: 1px solid var(--border-light);
-            padding: 2rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
         }
         
         .loan-modal .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
         
         .loan-modal .modal-body {
-            padding: 2rem;
+            padding: 1.5rem;
         }
-
-        /* Layout do Modal */
+        
+        /* Layout do Modal Minimalista */
         .modal-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
             align-items: start;
         }
-
+        
         .book-info-panel {
-            background: var(--primary-50);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border-light);
+            background: var(--light-bg);
+            border-radius: 6px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
         }
-
+        
         .form-panel {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border-light);
+            background: var(--white);
+            border-radius: 6px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
         }
-
+        
         .selected-book {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-color);
         }
-
+        
         .selected-book-cover {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
         }
-
+        
         .selected-book-info h5 {
             margin: 0 0 0.25rem 0;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-color);
+            font-size: 1rem;
         }
-
-        .selected-book-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
+        
         .isbn-tag {
-            background: var(--primary-100);
-            color: var(--primary-700);
+            background: var(--light-bg);
+            color: var(--primary-color);
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 500;
             display: inline-block;
         }
-
-        .availability-badge {
-            padding: 0.375rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
+        
         .section-title {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-color);
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-
+        
         .summary-card {
-            background: var(--surface);
-            border-radius: 8px;
-            padding: 1.25rem;
-            border: 1px solid var(--border-light);
+            background: var(--white);
+            border-radius: 6px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
             margin-top: 1.5rem;
         }
-
+        
         .summary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-color);
         }
-
+        
         .summary-item:last-child {
             border-bottom: none;
         }
-
+        
         .summary-label {
-            color: var(--text-secondary);
+            color: #7f8c8d;
             font-weight: 500;
+            font-size: 0.85rem;
         }
-
+        
         .summary-value {
-            color: var(--text-primary);
+            color: var(--text-color);
             font-weight: 600;
+            font-size: 0.85rem;
         }
-
+        
         .return-date-highlight {
-            background: var(--success-50);
-            border: 1px solid var(--success-100);
-            border-radius: 8px;
+            background: rgba(39, 174, 96, 0.08);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+            border-radius: 6px;
             padding: 1rem;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .return-label {
-            color: var(--success-700);
+            color: var(--success-color);
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.85rem;
         }
-
+        
         .return-date {
-            color: var(--success-700);
+            color: var(--success-color);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
-
+        
         .form-group {
-            margin-bottom: 1.5rem;
-        }
+    margin-bottom: 1.75rem;         /* Aumentado de 1.5rem para 1.75rem */
+}
 
-        .form-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.625rem;       /* Aumentado de 0.5rem para 0.625rem */
+    display: block;
+    font-size: 0.9rem;             /* Aumentado de 0.85rem para 0.9rem */
+}
 
-        .form-label.required::after {
-            content: " *";
-            color: var(--danger-500);
-        }
-
-        .form-control {
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
+.form-control {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.875rem;             /* Aumentado de 0.75rem para 0.875rem */
+    font-size: 1rem;               /* Aumentado de 0.95rem para 1rem */
+    transition: all 0.2s ease;
+    width: 100%;
+    height: 48px;                  /* Adicionado height para consistência */
+}
+        
         .form-control:focus {
-            border-color: var(--primary-400);
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
             outline: none;
         }
-
-        /* CORREÇÃO: Campo Período de Empréstimo */
-        .loan-period-container {
-            position: relative; height:45px;
+        
+        .input-group .btn {
+            height: auto;
+            padding: 0.75rem 1rem;
         }
-
-        .loan-period-container select { height: 50px;
-            width: 100%;
-            
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            background-color: white;
-            transition: all 0.3s ease;
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .loan-period-container select:focus {
-            border-color: var(--primary-400);
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
-            outline: none;
-        }
-
-        .select-arrow {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: var(--text-tertiary);
-            font-size: 1rem;
-        }
-
-        .input-group-text {
-            background: var(--primary-50);
-            border: 2px solid var(--border);
-            border-right: none;
-            color: var(--text-secondary);
-        }
-
-        .form-control:focus + .input-group-text {
-            border-color: var(--primary-400);
-        }
-
+        
         .modal-actions {
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid var(--border-color);
         }
-
+        
         .btn-secondary {
-            background: var(--primary-100);
-            color: var(--primary-700);
-            border: 1px solid var(--primary-200);
+            background: var(--light-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-size: 0.85rem;
         }
-
+        
         .btn-secondary:hover {
-            background: var(--primary-200);
-            border-color: var(--primary-300);
+            background: #e9ecef;
         }
-
+        
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            background: var(--primary-color);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-size: 0.85rem;
         }
-
+        
         .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            background: var(--secondary-color);
         }
-
+        
         /* Responsividade */
         @media (max-width: 768px) {
-            .page-container {
+            .library-container {
                 padding: 1rem;
             }
             
-            .page-title {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
+            .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
             
             .books-grid {
                 grid-template-columns: 1fr;
             }
             
-            .book-card {
-                margin-bottom: 1rem;
-            }
-            
-            .loan-modal .modal-header,
-            .loan-modal .modal-body {
-                padding: 1.5rem;
-            }
-
             .modal-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                gap: 1.25rem;
             }
-
+            
             .modal-actions {
-                align-items: center;
                 flex-direction: column;
+            }
+            
+            .btn-secondary,
+            .btn-primary {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .book-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .loan-button {
+                width: 100%;
+                justify-content: center;
             }
         }
         
         /* Animações Suaves */
+        .book-card,
+        .stat-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .book-card {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .stat-card {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        /* Scrollbar Personalizada */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--primary-100);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-300);
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-400);
-        }
     </style>
 </head>
 <body>
-    <div class="page-container">
-        <!-- Header Elegante -->
-        <div class="page-header">
-            <h1 class="page-title">Gestão de Empréstimos</h1>
-            <p class="page-subtitle">Gerencie e acompanhe todos os empréstimos da biblioteca de forma eficiente</p>
+    <div class="library-container">
+        <!-- Header Minimalista -->
+        <div class="library-header">
+            <h1 class="library-title">Gestão de Empréstimos</h1>
+            <p class="library-subtitle">Gerencie e acompanhe empréstimos da biblioteca</p>
         </div>
 
         <?php
        require_once('../../../conexao/conexao.php');
 
         try {
-            // Buscar todos os livros com UNIDADES_DISPONIVEIS
             $comandoSQL = "SELECT ISBN, TITULO, EDITORA, AUTOR, UNIDADES_DISPONIVEIS FROM LIVROS";
             $select = $conexao->query($comandoSQL);
             $livros = $select->fetchAll();
             $totalLivros = count($livros);
 
-            // Buscar empréstimos ativos para calcular disponibilidade real
             $comandoEmprestimos = "SELECT LIVRO_ISBN, COUNT(*) as total_emprestado 
                                   FROM EMPRESTIMO 
                                   WHERE STATUS_LIVRO != 'DEVOLVIDO' 
@@ -836,20 +646,17 @@ include("../../../recursos.php");
             $selectEmprestimos = $conexao->query($comandoEmprestimos);
             $emprestimosAtivos = $selectEmprestimos->fetchAll(PDO::FETCH_KEY_PAIR);
 
-            // Calcular estatísticas
             $livrosDisponiveis = 0;
             $livrosEmprestados = 0;
             $livrosIndisponiveis = 0;
             $totalEmprestimosAtivos = 0;
 
-            // Processar disponibilidade de cada livro
             $livrosComEstoque = [];
             foreach ($livros as $livro) {
                 $isbn = $livro['ISBN'];
                 $unidadesDisponiveis = $livro['UNIDADES_DISPONIVEIS'] ?? 0;
                 $emprestados = $emprestimosAtivos[$isbn] ?? 0;
                 
-                // Calcular unidades realmente disponíveis
                 $disponiveisReal = $unidadesDisponiveis - $emprestados;
                 
                 $livro['UNIDADES_DISPONIVEIS'] = $unidadesDisponiveis;
@@ -876,66 +683,56 @@ include("../../../recursos.php");
         }
         ?>
 
-        <!-- Cards de Estatísticas Modernos -->
-        <div class="stats-container">
+        <!-- Cards de Estatísticas Minimalistas -->
+        <div class="stats-grid">
             <div class="stat-card total">
-                <div class="stat-content">
-                    <div class="stat-icon">
-                        <i class="bi bi-book"></i>
-                    </div>
-                    <div class="stat-text">
-                        <div class="stat-number"><?php echo $totalLivros; ?></div>
-                        <div class="stat-label">Total de Livros</div>
-                    </div>
+                <div class="stat-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-number"><?php echo $totalLivros; ?></div>
+                    <div class="stat-label">Total de Livros</div>
                 </div>
             </div>
             
             <div class="stat-card disponiveis">
-                <div class="stat-content">
-                    <div class="stat-icon">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
-                    <div class="stat-text">
-                        <div class="stat-number"><?php echo $livrosDisponiveis; ?></div>
-                        <div class="stat-label">Disponíveis</div>
-                    </div>
+                <div class="stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-number"><?php echo $livrosDisponiveis; ?></div>
+                    <div class="stat-label">Disponíveis</div>
                 </div>
             </div>
             
             <div class="stat-card emprestados">
-                <div class="stat-content">
-                    <div class="stat-icon">
-                        <i class="bi bi-clock"></i>
-                    </div>
-                    <div class="stat-text">
-                        <div class="stat-number"><?php echo $livrosEmprestados; ?></div>
-                        <div class="stat-label">Emprestados</div>
-                    </div>
+                <div class="stat-icon">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-number"><?php echo $livrosEmprestados; ?></div>
+                    <div class="stat-label">Emprestados</div>
                 </div>
             </div>
             
             <div class="stat-card indisponiveis">
-                <div class="stat-content">
-                    <div class="stat-icon">
-                        <i class="bi bi-x-circle"></i>
-                    </div>
-                    <div class="stat-text">
-                        <div class="stat-number"><?php echo $livrosIndisponiveis; ?></div>
-                        <div class="stat-label">Indisponíveis</div>
-                    </div>
+                <div class="stat-icon">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-number"><?php echo $livrosIndisponiveis; ?></div>
+                    <div class="stat-label">Indisponíveis</div>
                 </div>
             </div>
         </div>
 
-        <!-- Barra de Pesquisa Elegante -->
-        <div class="search-section">
-            <div class="search-container">
-                <i class="bi bi-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Pesquisar livros por título, autor, editora ou ISBN..." id="searchInput">
-            </div>
+        <!-- Barra de Pesquisa Minimalista -->
+        <div class="search-container">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Pesquisar livros por título, autor, editora ou ISBN..." id="searchInput">
         </div>
 
-        <!-- Grid de Livros Moderno -->
+        <!-- Grid de Livros Minimalista -->
         <?php if($livrosComEstoque): ?>
             <div class="books-grid" id="booksGrid">
                 <?php foreach ($livrosComEstoque as $livro): 
@@ -975,13 +772,15 @@ include("../../../recursos.php");
                                     <i class="bi bi-box"></i>
                                     <span>
                                         <?php if($disponivel): ?>
-                                            <strong><?php echo $disponiveisReal; ?></strong> de <strong><?php echo $unidadesDisponiveis; ?></strong> unidades disponíveis
+                                            <strong><?php echo $disponiveisReal; ?></strong> de <?php echo $unidadesDisponiveis; ?> unidades
                                             <?php if($unidadesEmprestadas > 0): ?>
-                                                <span style="color: var(--warning-600);">(<?php echo $unidadesEmprestadas; ?> emprestadas)</span>
+                                                <span style="color: var(--warning-color); font-size: 0.8rem;">
+                                                    (<?php echo $unidadesEmprestadas; ?> emprestadas)
+                                                </span>
                                             <?php endif; ?>
                                         <?php else: ?>
-                                            <strong style="color: var(--danger-600);">Indisponível</strong> - 
-                                            <?php echo $unidadesEmprestadas; ?> de <?php echo $unidadesDisponiveis; ?> unidades emprestadas
+                                            <strong style="color: var(--error-color);">Indisponível</strong>
+                                            (<?php echo $unidadesEmprestadas; ?>/<?php echo $unidadesDisponiveis; ?> emprestadas)
                                         <?php endif; ?>
                                     </span>
                                 </div>
@@ -989,7 +788,7 @@ include("../../../recursos.php");
                         </div>
                         
                         <div class="book-footer">
-                            <div class="stock-info">
+                            <div>
                                 <span class="stock-badge <?php echo $disponivel ? 'stock-available' : 'stock-unavailable'; ?>">
                                     <i class="bi <?php echo $disponivel ? 'bi-check-circle-fill' : 'bi-x-circle-fill'; ?>"></i>
                                     <?php echo $disponivel ? 'Disponível' : 'Indisponível'; ?>
@@ -1013,16 +812,15 @@ include("../../../recursos.php");
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <!-- Estado Vazio Moderno -->
             <div class="empty-state">
                 <i class="bi bi-book-x empty-icon"></i>
                 <div class="empty-title">Nenhum livro encontrado</div>
-                <div class="empty-text">Não há livros disponíveis para empréstimo no momento. Verifique o catálogo da biblioteca.</div>
+                <div class="empty-text">Não há livros disponíveis para empréstimo no momento.</div>
             </div>
         <?php endif; ?>
     </div>
 
-    <!-- Modal de Empréstimo Funcional -->
+    <!-- Modal de Empréstimo Minimalista -->
     <div class="modal fade loan-modal" id="modalEmprestimo" tabindex="-1" aria-labelledby="modalEmprestimoLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -1035,7 +833,6 @@ include("../../../recursos.php");
                 </div>
                 <div class="modal-body">
                     <div class="modal-grid">
-                        <!-- Painel de Informações do Livro -->
                         <div class="book-info-panel">
                             <div class="selected-book">
                                 <div class="selected-book-cover">
@@ -1043,9 +840,9 @@ include("../../../recursos.php");
                                 </div>
                                 <div class="selected-book-info">
                                     <h5 id="modalBookTitle">Selecione um livro</h5>
-                                    <div class="selected-book-meta">
+                                    <div>
                                         <span class="isbn-tag" id="modalBookIsbn">ISBN: --</span>
-                                        <span class="availability-badge stock-available" id="modalBookAvailability">
+                                        <span class="stock-badge stock-available" id="modalBookAvailability" style="margin-left: 0.5rem;">
                                             <i class="bi bi-check-circle-fill"></i> Disponível
                                         </span>
                                     </div>
@@ -1083,7 +880,7 @@ include("../../../recursos.php");
                             <div class="return-date-highlight">
                                 <div class="return-label">
                                     <i class="bi bi-calendar-check"></i>
-                                    Previsão de Devolução:
+                                    Devolução:
                                 </div>
                                 <div class="return-date" id="modalReturnDate">
                                     <?php echo date('d/m/Y', strtotime('+14 days')); ?>
@@ -1091,14 +888,13 @@ include("../../../recursos.php");
                             </div>
                         </div>
 
-                        <!-- Painel do Formulário -->
                         <div class="form-panel">
                             <form action="/Api/emprestimos/cadastrar.php" method="post" id="loanForm">
                                 <input type="hidden" name="txtLIVRO_ISBN" id="modalIsbnInput">
                                 <input type="hidden" name="txtSTATUS_LIVRO" value="PENDENTE">
 
                                 <div class="form-group">
-                                    <label class="form-label required" for="userDocument">
+                                    <label class="form-label">
                                         <i class="bi bi-person-badge"></i>
                                         CPF/NIF do Utilizador
                                     </label>
@@ -1110,14 +906,13 @@ include("../../../recursos.php");
                                                placeholder="Digite o CPF ou NIF"
                                                required>
                                         <button type="button" class="btn btn-outline-secondary" id="btnSearchUser">
-                                            <i class="bi bi-search"></i> Buscar
+                                            <i class="bi bi-search"></i>
                                         </button>
                                     </div>
-                                    <small class="form-text text-muted">Digite o documento do utilizador para verificar disponibilidade</small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label required" for="loanDate">
+                                    <label class="form-label">
                                         <i class="bi bi-calendar"></i>
                                         Data do Empréstimo
                                     </label>
@@ -1130,27 +925,25 @@ include("../../../recursos.php");
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label required" for="loanPeriod">
+                                    <label class="form-label">
                                         <i class="bi bi-clock"></i>
                                         Período de Empréstimo
                                     </label>
-                                    <!-- CORREÇÃO: Campo Período de Empréstimo corrigido -->
-                                    <div class="loan-period-container">
-                                        <select class="form-control" id="loanPeriod" name="txtTEMPO_EMPRESTIMO" required>
-                                            <option value="">Selecione o período</option>
-                                            <option value="7">7 dias</option>
-                                            <option value="14" selected>14 dias</option>
-                                            <option value="21">21 dias</option>
-                                            <option value="30">30 dias</option>
-                                        </select>
-                                        <div class="select-arrow">▼</div>
-                                    </div>
+                                    <select class="form-control" id="loanPeriod" name="txtTEMPO_EMPRESTIMO" required>
+                                        <option value="">Selecione o período</option>
+                                        <option value="7">7 dias</option>
+                                        <option value="14" selected>14 dias</option>
+                                        <option value="21">21 dias</option>
+                                        <option value="30">30 dias</option>
+                                    </select>
                                 </div>
 
                                 <div class="modal-actions">
-                                    
-                                    <button type="submit" class="btn btn-primary" id="btnConfirmLoan">
-                                        <i class="bi bi-check-lg"></i> Confirmar Empréstimo
+                                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" class="btn-primary" id="btnConfirmLoan">
+                                        Confirmar Empréstimo
                                     </button>
                                 </div>
                             </form>
@@ -1163,20 +956,16 @@ include("../../../recursos.php");
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Função para abrir modal de empréstimo com dados do livro
         function abrirModalEmprestimo(livro) {
-            // Preencher dados do livro no modal
             document.getElementById('modalBookTitle').textContent = livro.TITULO || 'Título não disponível';
             document.getElementById('modalBookIsbn').textContent = 'ISBN: ' + (livro.ISBN || '--');
             document.getElementById('modalIsbnInput').value = livro.ISBN || '';
             
-            // Preencher informações do livro
             document.getElementById('summaryBookTitle').textContent = livro.TITULO || '--';
             document.getElementById('summaryBookIsbn').textContent = livro.ISBN || '--';
             document.getElementById('summaryBookAuthor').textContent = livro.AUTOR || '--';
             document.getElementById('summaryBookPublisher').textContent = livro.EDITORA || '--';
             
-            // Atualizar informações de stock
             const disponivel = livro.DISPONIVEL;
             const disponiveisReal = livro.DISPONIVEIS_REAL || 0;
             const unidadesDisponiveis = livro.UNIDADES_DISPONIVEIS || 0;
@@ -1186,26 +975,22 @@ include("../../../recursos.php");
             const stockInfo = document.getElementById('summaryBookStock');
             
             if (disponivel) {
-                availabilityBadge.className = 'availability-badge stock-available';
+                availabilityBadge.className = 'stock-badge stock-available';
                 availabilityBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Disponível';
-                stockInfo.textContent = `${disponiveisReal} de ${unidadesDisponiveis} unidades disponíveis`;
+                stockInfo.textContent = `${disponiveisReal} de ${unidadesDisponiveis} unidades`;
                 document.getElementById('btnConfirmLoan').disabled = false;
             } else {
-                availabilityBadge.className = 'availability-badge stock-unavailable';
+                availabilityBadge.className = 'stock-badge stock-unavailable';
                 availabilityBadge.innerHTML = '<i class="bi bi-x-circle-fill"></i> Indisponível';
-                stockInfo.textContent = `Indisponível - ${unidadesEmprestadas} de ${unidadesDisponiveis} unidades emprestadas`;
+                stockInfo.textContent = `Indisponível (${unidadesEmprestadas}/${unidadesDisponiveis} emprestadas)`;
                 document.getElementById('btnConfirmLoan').disabled = true;
             }
             
-            // Abrir o modal
             const modal = new bootstrap.Modal(document.getElementById('modalEmprestimo'));
             modal.show();
-            
-            // Atualizar data de retorno
             atualizarDataRetorno();
         }
 
-        // Atualizar data de retorno baseada no período selecionado
         function atualizarDataRetorno() {
             const loanDate = document.getElementById('loanDate').value;
             const loanPeriod = document.getElementById('loanPeriod').value;
@@ -1215,16 +1000,12 @@ include("../../../recursos.php");
                 const dataRetorno = new Date(dataEmprestimo);
                 dataRetorno.setDate(dataRetorno.getDate() + parseInt(loanPeriod));
                 
-                const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-                const dataFormatada = dataRetorno.toLocaleDateString('pt-PT', options);
-                
+                const dataFormatada = dataRetorno.toLocaleDateString('pt-PT');
                 document.getElementById('modalReturnDate').textContent = dataFormatada;
             }
         }
 
-        // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Filtro de pesquisa
             const searchInput = document.getElementById('searchInput');
             const bookCards = document.querySelectorAll('.book-card');
             
@@ -1248,22 +1029,18 @@ include("../../../recursos.php");
                 });
             }
             
-            // Atualizar data de retorno quando mudar data ou período
             document.getElementById('loanDate').addEventListener('change', atualizarDataRetorno);
             document.getElementById('loanPeriod').addEventListener('change', atualizarDataRetorno);
             
-            // Buscar utilizador
             document.getElementById('btnSearchUser').addEventListener('click', function() {
                 const userDocument = document.getElementById('userDocument').value.trim();
                 if (userDocument) {
-                    // Simular busca de utilizador
-                    alert(`Buscando utilizador com documento: ${userDocument}\n\nEsta funcionalidade integrará com o sistema de utilizadores.`);
+                    alert(`Buscando utilizador com documento: ${userDocument}`);
                 } else {
                     alert('Por favor, digite um CPF ou NIF para buscar.');
                 }
             });
             
-            // Validação do formulário
             document.getElementById('loanForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -1276,36 +1053,9 @@ include("../../../recursos.php");
                     return;
                 }
                 
-                // Simular envio do formulário
-                if (confirm('Confirmar empréstimo?\n\nLivro: ' + document.getElementById('modalBookTitle').textContent + 
-                           '\nUtilizador: ' + userDocument + 
-                           '\nPeríodo: ' + loanPeriod + ' dias' +
-                           '\nDevolução: ' + document.getElementById('modalReturnDate').textContent)) {
+                if (confirm('Confirmar empréstimo?')) {
                     this.submit();
                 }
-            });
-
-            // CORREÇÃO: Botão Cancelar funcional
-            document.querySelector('.btn-secondary[data-bs-dismiss="modal"]').addEventListener('click', function() {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEmprestimo'));
-                modal.hide();
-            });
-
-            // CORREÇÃO: Botão Fechar (X) funcional
-            document.querySelector('.btn-close').addEventListener('click', function() {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEmprestimo'));
-                modal.hide();
-            });
-        });
-
-        // Efeitos de hover suaves
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.book-card, .stat-card');
-            
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-                });
             });
         });
     </script>

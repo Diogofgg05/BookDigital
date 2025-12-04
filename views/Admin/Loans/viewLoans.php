@@ -935,4 +935,4 @@ include("../../../recursos.php");
 </body>
 </html>
 
-<?php include('../../layout/footer.html'); ?>
+<?php include('../../../layout/footer.html'); ?>

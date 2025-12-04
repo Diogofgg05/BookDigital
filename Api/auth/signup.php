@@ -1,11 +1,8 @@
 <?php
-# Impede que usuários acessem a página se não estiverem logados
-include('../../seguranca/seguranca.php');
 session_start();
-if(administrador_logado() == false) {header("location: /index.php"); exit;}
-
-require_once("../../conexao/conexao.php");
-
+require_once(__DIR__ . "/../../conexao/conexao.php");
+include('../../seguranca/seguranca.php');
+// Verificar se é uma submissão do formulário
 $teste_NIF = campo_e_valido("txtNIF", "NIF");
 $teste_NOME = campo_e_valido("txtNOME", "nome");
 $teste_SOBRENOME = campo_e_valido("txtSOBRENOME", "sobrenome");
@@ -52,7 +49,7 @@ try {
 
     if($comando->rowCount() > 0)
     {
-        header('location:/views/usuarios/visualizar.php');
+        header('location:../../index.php');
         exit;
     }
     else

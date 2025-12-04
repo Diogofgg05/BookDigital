@@ -4,7 +4,7 @@ include('../../seguranca/seguranca.php');
 session_start();
 if(administrador_logado() == false) {header("location: /index.php"); exit;}
 
-require_once("../../conexao/conexao.php");
+require_once(__DIR__ . "/../../conexao/conexao.php");
 
 $teste_LIVRO_ISBN = campo_e_valido("txtLIVRO_ISBN", "Livro");
 $teste_NIF_PESSOA = campo_e_valido("txtNIF_PESSOA", "Pessoa");

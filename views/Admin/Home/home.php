@@ -170,10 +170,7 @@ include('../../../layout/navbar.php');
         }
         
         body {
-            background-color: #f8f9fa;
-            color: var(--text-color);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
+          
         }
         
         .dashboard-container {
@@ -804,4 +801,4 @@ include('../../../layout/navbar.php');
 </body>
 </html>
 
-<?php include('layout/footer.html'); ?>
+<?php include('../../../layout/footer.html'); ?>

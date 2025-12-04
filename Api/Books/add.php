@@ -6,7 +6,7 @@ if(administrador_logado() == false) {
     exit;
 }
 
-require_once("../../conexao/conexao.php");
+require_once(__DIR__ . "/../../conexao/conexao.php");
 
 // Coletar dados do formulário
 $titulo = filter_input(INPUT_POST, "txtTITULO", FILTER_SANITIZE_STRING);

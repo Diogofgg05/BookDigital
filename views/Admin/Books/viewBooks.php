@@ -1,22 +1,26 @@
 <?php
+session_start();
+
 # Impede que usuários acessem a página se não estiverem logados
 include('../../../seguranca/seguranca.php');
-session_start();
-if(administrador_logado() == false) {header("location: /index.php"); exit;}
 
-include('../../../layout/header.html');
-include('../../../layout/navbar.php');
+if(administrador_logado() == false) {
+    header("location: /index.php"); 
+    exit;
+}
 
 // Inclui o arquivo com as funções de dados
-include('../../../Api/livros/viewBooks.php');
+include('../../../Api/Books/viewBooks.php');
 
 // Obtém os dados dos livros
 $resultado = obterLivros($conexao);
 $totalLivros = count($resultado);
 $livrosDisponiveis = $totalLivros;
 $livrosEmCirculacao = 0;
-?>
 
+include('../../../layout/header.html');
+include('../../../layout/navbar.php');
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -33,690 +37,859 @@ $livrosEmCirculacao = 0;
             --text-color: #2c3e50;
             --text-light: #7f8c8d;
             --border-color: #ecf0f1;
-            --card-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            --hover-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
             --success-color: #27ae60;
-            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
             color: var(--text-color);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            overflow-x: hidden;
         }
         
-        .page-container {
+        /* SIDEBAR MOBILE */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            z-index: 1050;
+            transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+            padding-top: 60px;
+        }
+        
+        .mobile-sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px;
+            z-index: 1051;
+            transition: color 0.2s ease;
+        }
+        
+        .sidebar-close:hover {
+            color: var(--primary-color);
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+        }
+        
+        .sidebar-header {
+            padding: 0 0 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-header h5 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--light-bg);
+            color: var(--accent-color);
+        }
+        
+        .sidebar-menu i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Botão hamburguer */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 12px;
+            transition: color 0.2s ease;
+        }
+        
+        .menu-toggle:hover {
+            color: var(--accent-color);
+        }
+        
+        /* Esconder sidebar desktop em mobile */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .desktop-sidebar {
+                display: none !important;
+            }
+        }
+        
+        .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 24px;
+            transition: all 0.3s ease;
         }
         
+        /* HEADER - Minimalista Perfeito */
         .page-header {
-            margin-bottom: 2rem;
+            margin-bottom: 32px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                justify-content: flex-start;
+            }
         }
         
         .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
+            font-size: 28px;
+            font-weight: 700;
             color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            margin: 0;
+            letter-spacing: -0.025em;
         }
         
         .page-subtitle {
+            font-size: 14px;
             color: var(--text-light);
-            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+        
+        /* STATS CARDS - Horizontal Clean */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-color);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* SEARCH & ACTIONS BAR */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
         }
         
         .search-container {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-        
-        .search-box {
+            flex: 1;
             position: relative;
-            max-width: 500px;
-            margin: 0 auto;
         }
         
         .search-input {
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            width: 100%;
+            padding: 12px 16px 12px 40px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            background: #fafbfc;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            background: var(--white);
+            color: var(--text-color);
+            transition: all 0.2s ease;
         }
         
         .search-input:focus {
+            outline: none;
             border-color: var(--accent-color);
-            background: white;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         .search-icon {
             position: absolute;
-            left: 0.75rem;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-light);
+            font-size: 14px;
         }
         
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .stat-number {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            color: var(--text-light);
-            font-size: 0.85rem;
-            display: flex;
+        /* ADD BUTTON - Minimal Premium */
+        .btn-add {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
         
-        /* Grid de Livros - CORRIGIDO para tamanho fixo */
+        .btn-add:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* BOOKS GRID - Perfeição Minimalista */
         .books-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            gap: 24px;
+            margin-bottom: 40px;
         }
         
         .book-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
+            background: var(--white);
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
             cursor: pointer;
-            height: fit-content; /* CORREÇÃO: Altura conforme conteúdo */
         }
         
         .book-card:hover {
+            box-shadow: var(--shadow-lg);
             transform: translateY(-4px);
-            box-shadow: var(--hover-shadow);
+            border-color: var(--accent-color);
         }
         
         .book-cover {
-            height: 160px; /* ALTURA FIXA */
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa, #ecf0f1);
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
         }
         
-        /* ESTILO PARA IMAGENS REAIS - CORREÇÃO */
         .book-cover-img {
-            height: 160px;
             width: 100%;
-            object-fit: cover; /* CORREÇÃO: imagem cobre a área sem distorcer */
-            display: block;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .book-card:hover .book-cover-img {
+            transform: scale(1.05);
         }
         
         .book-cover-placeholder {
-            height: 160px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #bdc3c7;
+            font-size: 48px;
+        }
+        
+        .book-info {
+            padding: 20px;
+            flex-grow: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .book-cover-placeholder::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.1);
-        }
-        
-        .book-icon {
-            font-size: 3rem;
-            color: white;
-            opacity: 0.9;
-            z-index: 1;
-        }
-        
-        .book-body {
-            padding: 1.25rem;
+            flex-direction: column;
         }
         
         .book-title {
-            font-size: 1rem;
+            font-size: 16px;
             font-weight: 600;
             color: var(--primary-color);
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
+            margin-bottom: 8px;
+            line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 2.8em; /* ALTURA FIXA para título */
         }
         
-        .book-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
+        .book-author {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            font-weight: 400;
         }
         
-        .book-detail {
+        .book-meta {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .book-tag {
+            background: var(--light-bg);
             color: var(--text-color);
-        }
-        
-        .book-detail i {
-            color: var(--accent-color);
-            width: 14px;
-            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .book-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
         }
         
+        @media (max-width: 576px) {
+            .book-actions {
+                flex-direction: column;
+            }
+        }
+        
+        /* ACTION BUTTONS - Minimal Perfection */
         .btn-action {
             flex: 1;
-            padding: 0.5rem 0.75rem;
+            padding: 8px 12px;
             border: 1px solid var(--border-color);
-            background: white;
-            color: var(--text-color);
-            border-radius: 4px;
-            font-size: 0.75rem;
+            border-radius: var(--radius-sm);
+            background: var(--light-bg);
+            color: var(--text-light);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
             transition: all 0.2s ease;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.25rem;
+            gap: 6px;
         }
         
         .btn-action:hover {
-            background: #f8f9fa;
+            background: var(--white);
             border-color: var(--accent-color);
         }
         
-        .btn-edit:hover {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+        .btn-action-edit:hover {
+            color: var(--accent-color);
         }
         
-        .btn-delete:hover {
-            background: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
+        .btn-action-delete:hover {
+            color: var(--error-color);
         }
         
-        /* Empty State */
+        /* EMPTY STATE */
         .empty-state {
+            grid-column: 1 / -1;
             text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-light);
+            padding: 60px 20px;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-color);
         }
         
         .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.4;
+            font-size: 48px;
+            color: #e0e6ed;
+            margin-bottom: 20px;
         }
         
-        .empty-text {
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+        .empty-state h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-weight: 600;
         }
-
-        /* MODAL - Mantido igual */
+        
+        .empty-state p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        /* MODAL - Minimalista Perfeito */
         .book-modal .modal-content {
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
+            background: var(--white);
         }
-
+        
         .book-modal .modal-header {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1.5rem 2rem;
-            border-radius: 12px 12px 0 0;
-            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            padding: 24px 28px;
+            background: var(--white);
         }
-
-        .book-modal .modal-header-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-        }
-
-        .book-modal .modal-cover {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .book-modal .modal-book-info {
-            flex: 1;
-        }
-
+        
         .book-modal .modal-title {
-            font-size: 1.25rem;
+            font-size: 20px;
             font-weight: 600;
             color: var(--primary-color);
-            margin: 0 0 0.25rem 0;
         }
-
-        .book-modal .modal-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin: 0;
+        
+        .book-modal .modal-body {
+            padding: 0;
+        }
+        
+        .modal-content-wrapper {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            min-height: 400px;
         }
-
-        .book-modal .btn-close-custom {
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 6px;
-            color: var(--text-light);
-            width: 32px;
-            height: 32px;
+        
+        .modal-cover-section {
+            flex: 0 0 300px;
+            background: linear-gradient(135deg, #f8f9fa, #ecf0f1);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            transition: all 0.2s ease;
+            padding: 32px;
+            border-right: 1px solid var(--border-color);
         }
-
-        .book-modal .btn-close-custom:hover {
-            background: white;
-            color: var(--text-color);
-            transform: scale(1.1);
+        
+        .modal-cover {
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .book-modal .modal-body {
-            padding: 2rem;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .info-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.25rem;
-            transition: all 0.2s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .info-header {
+        
+        .modal-info-section {
+            flex: 1;
+            padding: 32px;
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
+            flex-direction: column;
         }
-
-        .info-header i {
-            color: var(--accent-color);
-            font-size: 1.1rem;
-        }
-
-        .info-header h6 {
-            margin: 0;
+        
+        .modal-book-title {
+            font-size: 24px;
             font-weight: 600;
             color: var(--primary-color);
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .modal-book-author {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+        
+        .modal-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .modal-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .modal-detail-label {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
         }
-
-        .info-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .info-label {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-label i {
-            width: 14px;
-            font-size: 0.8rem;
-            color: #6b7280;
-        }
-
-        .info-value {
-            font-size: 0.9rem;
+        
+        .modal-detail-value {
+            font-size: 14px;
             color: var(--text-color);
             font-weight: 500;
-            padding-left: 1.5rem;
         }
-
-        .info-value.empty {
+        
+        .modal-description {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .modal-description h6 {
+            font-size: 12px;
             color: var(--text-light);
-            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
-
-        .description-section {
-            background: linear-gradient(135deg, #f8fafc, #e5e7eb);
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .description-content {
-            font-size: 0.9rem;
-            line-height: 1.5;
+        
+        .modal-description p {
             color: var(--text-color);
-            max-height: 120px;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            max-height: 80px;
             overflow-y: auto;
         }
-
-        .description-content.empty {
-            color: var(--text-light);
-            font-style: italic;
-        }
-
-        .modal-actions {
+        
+        .modal-footer {
+            padding: 20px 28px;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 1rem;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
+            gap: 12px;
+            justify-content: flex-end;
+            background: var(--white);
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn-modal {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .btn-modal-danger {
-            background: rgba(220, 38, 38, 0.1);
-            color: #dc2626;
-            border: 1px solid rgba(220, 38, 38, 0.2);
-        }
-
-        .btn-modal-danger:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-modal-secondary {
-            background: white;
-            color: var(--text-color);
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-modal-secondary:hover {
-            background: #f8f9fa;
-            border-color: var(--accent-color);
-        }
-
-        .btn-modal-primary {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-        }
-
-        .btn-modal-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .status-available {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-borrowed {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-reserved {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .page-container {
-                padding: 1rem;
+        
+        /* RESPONSIVE - Perfeito */
+        @media (max-width: 1200px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             }
             
+            .modal-content-wrapper {
+                min-height: auto;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .main-container {
+                padding: 20px;
+            }
+            
+            .modal-content-wrapper {
+                flex-direction: column;
+            }
+            
+            .modal-cover-section {
+                flex: none;
+                padding: 24px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .modal-cover {
+                width: 180px;
+                height: 252px;
+            }
+            
+            .modal-info-section {
+                padding: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
             .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 16px;
+            }
+            
+            .modal-details-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 16px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 16px;
             }
             
             .stats-container {
                 grid-template-columns: 1fr;
             }
             
-            .info-grid {
+            .books-grid {
                 grid-template-columns: 1fr;
             }
             
-            .book-modal .modal-header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 0.75rem;
+            .page-title {
+                font-size: 24px;
             }
             
-            .modal-actions {
+            .modal-footer {
                 flex-direction: column;
-                gap: 0.75rem;
             }
             
-            .action-buttons {
-                width: 100%;
-                justify-content: space-between;
+            .book-modal .modal-header,
+            .modal-footer {
+                padding: 20px;
             }
         }
-
-        @media (max-width: 576px) {
-            .book-modal .modal-body {
-                padding: 1.5rem 1rem;
+        
+        /* ANIMAÇÕES SUTIS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-            
-            .book-modal .modal-header {
-                padding: 1.25rem 1.5rem;
-            }
-            
-            .book-modal .btn-close-custom {
-                top: 1.25rem;
-                right: 1.5rem;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
+        
+        .book-card {
+            animation: fadeInUp 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .book-card:nth-child(1) { animation-delay: 0.1s; }
+        .book-card:nth-child(2) { animation-delay: 0.2s; }
+        .book-card:nth-child(3) { animation-delay: 0.3s; }
+        .book-card:nth-child(4) { animation-delay: 0.4s; }
+        .book-card:nth-child(5) { animation-delay: 0.5s; }
+        .book-card:nth-child(6) { animation-delay: 0.6s; }
+        .book-card:nth-child(7) { animation-delay: 0.7s; }
+        .book-card:nth-child(8) { animation-delay: 0.8s; }
     </style>
 </head>
 <body>
-    <div class="page-container">
-        <!-- Cabeçalho Minimalista -->
-        <div class="page-header">
-            <h1 class="page-title">Acervo de Livros</h1>
-            <p class="page-subtitle">Gerencie e visualize todos os livros da biblioteca</p>
-        </div>
-
-        <!-- Barra de Pesquisa -->
-        <div class="search-container">
-            <div class="search-box">
-                <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control search-input" id="searchInput" 
-                       placeholder="Pesquisar livros por título, autor, ISBN, editora ou categoria...">
+    <!-- Overlay para fechar sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar Mobile -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <button class="sidebar-close" id="sidebarClose">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        
+        <!-- Conteúdo do sidebar -->
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <h5>Menu</h5>
             </div>
+            <ul class="sidebar-menu">
+                <li><a href="/dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a href="/views/Admin/Books/viewBooks.php" class="active"><i class="bi bi-book"></i> Livros</a></li>
+                <li><a href="/views/Admin/Users/viewUsers.php"><i class="bi bi-people"></i> Usuários</a></li>
+                <li><a href="/views/Admin/Loans/viewLoans.php"><i class="bi bi-arrow-left-right"></i> Empréstimos</a></li>
+                <li><a href="/views/Admin/Reports/reports.php"><i class="bi bi-bar-chart"></i> Relatórios</a></li>
+            </ul>
         </div>
-
+    </div>
+    
+    <div class="main-container">
+        <!-- HEADER -->
+        <header class="page-header">
+            <div class="header-content">
+                <div style="display: flex; align-items: center;">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <h1 class="page-title">Livros</h1>
+                        <p class="page-subtitle">Gerencie o acervo da biblioteca</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- STATS -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $totalLivros; ?></div>
+                    <div class="stat-label">Total</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $livrosDisponiveis; ?></div>
+                    <div class="stat-label">Disponíveis</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $livrosEmCirculacao; ?></div>
+                    <div class="stat-label">Em Circulação</div>
+                </div>
+            </div>
+            
+            <!-- SEARCH & ACTIONS -->
+            <div class="action-bar">
+                <div class="search-container">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" 
+                           placeholder="Pesquisar por título, autor ou ISBN...">
+                </div>
+                
+            </div>
+        </header>
+        
+        <!-- BOOKS GRID -->
         <?php if($resultado) { ?>
-            <!-- Grid de Livros -->
             <div class="books-grid" id="booksGrid">
                 <?php foreach ($resultado as $index => $linha) {
                     $ISBN = $linha["ISBN"];
                     $ISBN_LINK_EXCL = "/views/Admin/Books/delBooks.php?ISBN=$ISBN";
                     $ISBN_LINK_EDIT = "/views/Admin/Books/editBooks.php?ISBN=$ISBN";
                     
-                    // Formatar a data de publicação
-                    $dataPublicacao = formatarDataPublicacao($linha["ANO_PUBLICACAO"]);
+                    $temImagem = !empty($linha["IMG_LIVROS"]) && $linha["IMG_LIVROS"] != '[ ]';
+                    $caminhoImagem = '';
+                    $imagemExiste = false;
                     
-                    // Cores para as capas
-                    $colors = [
-                        'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
-                        'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
-                        'linear-gradient(135deg, #27ae60 0%, #229954 100%)',
-                        'linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%)',
-                        'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)',
-                        'linear-gradient(135deg, #f39c12 0%, #d35400 100%)'
-                    ];
-                    $coverColor = $colors[$index % count($colors)];
-                    
-                    // Verificar se tem imagem
-                    $temImagem = !empty($linha["IMG_LIVROS"]);
+                    if ($temImagem) {
+                        $caminhoNaBase = $linha["IMG_LIVROS"];
+                        if (strpos($caminhoNaBase, '/uploads/') === 0) {
+                            $caminhoImagem = '/Api' . $caminhoNaBase;
+                        } else {
+                            $caminhoImagem = $caminhoNaBase;
+                        }
+                        $caminhoAbsoluto = $_SERVER['DOCUMENT_ROOT'] . $caminhoImagem;
+                        $imagemExiste = file_exists($caminhoAbsoluto);
+                    }
                 ?>
                 <div class="book-card" data-book-isbn="<?php echo $ISBN; ?>">
-                    <?php if($temImagem) { ?>
-                        <img src="<?php echo htmlspecialchars($linha["IMG_LIVROS"]); ?>" 
-                             alt="Capa do livro <?php echo htmlspecialchars($linha["TITULO"]); ?>" 
-                             class="book-cover-img"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="book-cover-placeholder" style="display: none; background: <?php echo $coverColor; ?>">
-                            <i class="bi bi-book book-icon"></i>
-                        </div>
-                    <?php } else { ?>
-                        <div class="book-cover-placeholder" style="background: <?php echo $coverColor; ?>">
-                            <i class="bi bi-book book-icon"></i>
-                        </div>
-                    <?php } ?>
+                    <div class="book-cover">
+                        <?php if($temImagem && $imagemExiste) { ?>
+                            <img src="<?php echo htmlspecialchars($caminhoImagem); ?>" 
+                                 alt="Capa do livro <?php echo htmlspecialchars($linha["TITULO"]); ?>" 
+                                 class="book-cover-img"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="book-cover-placeholder" style="display: none;">
+                                <i class="bi bi-book"></i>
+                            </div>
+                        <?php } else { ?>
+                            <div class="book-cover-placeholder">
+                                <i class="bi bi-book"></i>
+                            </div>
+                        <?php } ?>
+                    </div>
                     
-                    <div class="book-body">
+                    <div class="book-info">
                         <h3 class="book-title"><?php echo htmlspecialchars($linha["TITULO"]); ?></h3>
+                        <p class="book-author">
+                            <?php echo isset($linha["AUTOR"]) && !empty($linha["AUTOR"]) && $linha["AUTOR"] != '[ ]' 
+                                ? htmlspecialchars($linha["AUTOR"]) 
+                                : 'Autor Desconhecido'; ?>
+                        </p>
                         
-                        <div class="book-details">
-                            <div class="book-detail">
-                                <i class="bi bi-upc-scan"></i>
-                                <span><?php echo htmlspecialchars($linha["ISBN"]); ?></span>
-                            </div>
-                            <div class="book-detail">
-                                <i class="bi bi-building"></i>
-                                <span><?php echo htmlspecialchars($linha["EDITORA"]); ?></span>
-                            </div>
-                            <?php if(isset($linha["AUTOR"]) && !empty($linha["AUTOR"])) { ?>
-                            <div class="book-detail">
-                                <i class="bi bi-person"></i>
-                                <span><?php echo htmlspecialchars($linha["AUTOR"]); ?></span>
-                            </div>
+                        <div class="book-meta">
+                            <?php if(isset($linha["GENERO"]) && !empty($linha["GENERO"]) && $linha["GENERO"] != '[ ]') { ?>
+                                <span class="book-tag">
+                                    <?php echo htmlspecialchars($linha["GENERO"]); ?>
+                                </span>
                             <?php } ?>
-                            <?php if(isset($linha["GENERO"]) && !empty($linha["GENERO"])) { ?>
-                            <div class="book-detail">
-                                <i class="bi bi-tags"></i>
-                                <span><?php echo htmlspecialchars($linha["GENERO"]); ?></span>
-                            </div>
+                            
+                            <?php if(isset($linha["ANO_PUBLICACAO"]) && !empty($linha["ANO_PUBLICACAO"])) { ?>
+                                <span class="book-tag">
+                                    <?php echo htmlspecialchars($linha["ANO_PUBLICACAO"]); ?>
+                                </span>
                             <?php } ?>
-                            <div class="book-detail">
-                                <i class="bi bi-calendar"></i>
-                                <span><?php echo htmlspecialchars($dataPublicacao); ?></span>
-                            </div>
                         </div>
                         
                         <div class="book-actions">
-                            <a href="<?php echo $ISBN_LINK_EDIT; ?>" class="btn-action btn-edit" onclick="event.stopPropagation()">
-                                <i class="bi bi-pencil"></i> Editar
+                            <a href="<?php echo $ISBN_LINK_EDIT; ?>" class="btn-action btn-action-edit" onclick="event.stopPropagation()">
+                                <i class="bi bi-pencil"></i>
+                                Editar
                             </a>
-                            <a href="<?php echo $ISBN_LINK_EXCL; ?>" class="btn-action btn-delete" 
+                            <a href="<?php echo $ISBN_LINK_EXCL; ?>" class="btn-action btn-action-delete" 
                                onclick="event.stopPropagation(); return confirm('Tem certeza que deseja excluir este livro?')">
-                                <i class="bi bi-trash"></i> Excluir
+                                <i class="bi bi-trash"></i>
+                                Excluir
                             </a>
                         </div>
                     </div>
@@ -724,284 +897,299 @@ $livrosEmCirculacao = 0;
                 <?php } ?>
             </div>
         <?php } else { ?>
-            <!-- Estado vazio -->
             <div class="empty-state">
-                <i class="bi bi-book-x empty-icon"></i>
-                <h4 class="empty-text">Nenhum livro cadastrado</h4>
-                <p class="text-muted mb-3">Comece adicionando o primeiro livro ao acervo</p>
-                <a href="/views/livros/cadastrar.php" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>Registar Primeiro Livro
+                <div class="empty-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+                <h3>Nenhum livro encontrado</h3>
+                <p>Comece adicionando um novo livro ao acervo</p>
+                <a href="/views/Admin/Books/regBooks.php" class="btn-add" style="max-width: 200px; margin: 0 auto;">
+                    <i class="bi bi-plus-lg"></i>
+                    Adicionar Livro
                 </a>
             </div>
         <?php } ?>
     </div>
-
-    <!-- Modal para exibir informações completas do livro -->
-    <div class="modal fade book-modal" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
+    
+    <!-- MODAL -->
+    <div class="modal fade book-modal" id="bookModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <!-- Cabeçalho com gradiente -->
                 <div class="modal-header">
-                    <div class="modal-header-content">
-                        <div class="modal-cover">
-                            <i class="bi bi-book"></i>
-                        </div>
-                        <div class="modal-book-info">
-                            <h5 class="modal-title" id="modalTitle"></h5>
-                            <p class="modal-subtitle">
-                                <i class="bi bi-person"></i>
-                                <span id="modalAuthor"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+                    <h5 class="modal-title">Detalhes do Livro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <!-- Corpo do Modal -->
                 <div class="modal-body">
-                    <!-- Grid de Informações -->
-                    <div class="info-grid">
-                        <!-- Informações Básicas -->
-                        <div class="info-card">
-                            <div class="info-header">
-                                <i class="bi bi-info-circle"></i>
-                                <h6>Informações Básicas</h6>
-                            </div>
-                            <div class="info-content">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-upc-scan"></i>
-                                        ISBN
-                                    </div>
-                                    <div class="info-value" id="modalIsbn"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-building"></i>
-                                        Editora
-                                    </div>
-                                    <div class="info-value" id="modalEditora"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-calendar"></i>
-                                        Data de Publicação
-                                    </div>
-                                    <div class="info-value" id="modalDataPublicacao"></div>
-                                </div>
-                            </div>
+                    <div class="modal-content-wrapper">
+                        <div class="modal-cover-section">
+                            <img id="modalCover" class="modal-cover" src="" alt="Capa do livro">
                         </div>
-
-                        <!-- Detalhes Adicionais -->
-                        <div class="info-card">
-                            <div class="info-header">
-                                <i class="bi bi-tags"></i>
-                                <h6>Detalhes</h6>
+                        <div class="modal-info-section">
+                            <h4 class="modal-book-title" id="modalTitle"></h4>
+                            <p class="modal-book-author" id="modalAuthor"></p>
+                            
+                            <div class="modal-details-grid">
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">ISBN</span>
+                                    <span class="modal-detail-value" id="modalIsbn"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Editora</span>
+                                    <span class="modal-detail-value" id="modalPublisher"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Ano</span>
+                                    <span class="modal-detail-value" id="modalYear"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Gênero</span>
+                                    <span class="modal-detail-value" id="modalGenre"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Idioma</span>
+                                    <span class="modal-detail-value" id="modalLanguage"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Páginas</span>
+                                    <span class="modal-detail-value" id="modalPages"></span>
+                                </div>
+                                <div class="modal-detail">
+                                    <span class="modal-detail-label">Unidades</span>
+                                    <span class="modal-detail-value" id="modalUnits"></span>
+                                </div>
                             </div>
-                            <div class="info-content">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-translate"></i>
-                                        Idioma
-                                    </div>
-                                    <div class="info-value" id="modalIdioma"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-bookmark"></i>
-                                        Categoria
-                                    </div>
-                                    <div class="info-value" id="modalCategoria"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-circle-fill"></i>
-                                        Status
-                                    </div>
-                                    <div class="info-value">
-                                        <span class="status-badge" id="modalStatus"></span>
-                                    </div>
-                                </div>
+                            
+                            <div class="modal-description">
+                                <h6>Sinopse</h6>
+                                <p id="modalDescription"></p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Descrição -->
-                    <div class="description-section">
-                        <div class="info-header">
-                            <i class="bi bi-text-paragraph"></i>
-                            <h6>Descrição</h6>
-                        </div>
-                        <div class="description-content" id="modalDescricao">
-                            <div class="text-muted" style="font-style: italic;">
-                                Nenhuma descrição disponível.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ações -->
-                    <div class="modal-actions">
-                        <button type="button" class="btn-modal btn-modal-danger" id="modalDeleteBtn">
-                            <i class="bi bi-trash"></i>
-                            Excluir Livro
-                        </button>
-                        <div class="action-buttons">
-                            <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i>
-                                Fechar
-                            </button>
-                            <a href="#" class="btn-modal btn-modal-primary" id="modalEditBtn">
-                                <i class="bi bi-pencil"></i>
-                                Editar Livro
-                            </a>
-                        </div>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn-action btn-action-edit" id="modalEditLink">
+                        <i class="bi bi-pencil"></i>
+                        Editar
+                    </a>
+                    <a href="#" class="btn-action btn-action-delete" id="modalDeleteLink">
+                        <i class="bi bi-trash"></i>
+                        Excluir
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Dados dos livros
         const livros = <?php echo json_encode($resultado); ?>;
-
-        // Função para formatar data
-        function formatarDataPublicacao(ano) {
-            if (!ano || ano === '0000' || ano === '0') {
-                return '23-01-2020'; // Data padrão
-            }
-            
-            // Se já estiver no formato correto, retorna como está
-            if (typeof ano === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(ano)) {
-                return ano;
-            }
-            
-            // Se for apenas o ano, formata para 23-01-ANO
-            if (!isNaN(ano) && String(ano).length === 4) {
-                return "23-01-" + ano;
-            }
-            
-            // Se for outro formato, tenta converter
-            const timestamp = Date.parse(ano);
-            if (!isNaN(timestamp)) {
-                const date = new Date(timestamp);
-                const dia = String(date.getDate()).padStart(2, '0');
-                const mes = String(date.getMonth() + 1).padStart(2, '0');
-                const anoFormatado = date.getFullYear();
-                return `${dia}-${mes}-${anoFormatado}`;
-            }
-            
-            // Fallback para data padrão
-            return '23-01-2020';
+        
+        // Controle do Sidebar Mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        
+        // Variáveis para controle do swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const SWIPE_THRESHOLD = 50;
+        
+        // Função para abrir sidebar
+        function openSidebar() {
+            mobileSidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-
-        // Função para abrir o modal com as informações do livro
-        function abrirModalLivro(livro) {
-            console.log('Abrindo modal para:', livro);
+        
+        // Função para fechar sidebar
+        function closeSidebar() {
+            mobileSidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Inicializar controles do sidebar se os elementos existirem
+        if (menuToggle && mobileSidebar) {
+            // Abrir sidebar com botão hamburguer
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openSidebar();
+            });
             
-            // Preenche os dados no modal
-            document.getElementById('modalTitle').textContent = livro.TITULO || 'Sem título';
-            document.getElementById('modalAuthor').textContent = livro.AUTOR ? `por ${livro.AUTOR}` : 'Autor não informado';
-            document.getElementById('modalIsbn').textContent = livro.ISBN || 'Não informado';
-            document.getElementById('modalIsbn').className = livro.ISBN ? 'info-value' : 'info-value empty';
-            
-            document.getElementById('modalEditora').textContent = livro.EDITORA || 'Não informada';
-            document.getElementById('modalEditora').className = livro.EDITORA ? 'info-value' : 'info-value empty';
-            
-            // Formatar a data de publicação
-            const dataPublicacao = formatarDataPublicacao(livro.ANO_PUBLICACAO);
-            document.getElementById('modalDataPublicacao').textContent = dataPublicacao;
-            document.getElementById('modalDataPublicacao').className = 'info-value';
-            
-            document.getElementById('modalIdioma').textContent = livro.IDIOMA || 'Não informado';
-            document.getElementById('modalIdioma').className = livro.IDIOMA ? 'info-value' : 'info-value empty';
-            
-            // CORREÇÃO AQUI: Usar GENERO em vez de CATEGORIA
-            document.getElementById('modalCategoria').textContent = livro.GENERO || 'Não informada';
-            document.getElementById('modalCategoria').className = livro.GENERO ? 'info-value' : 'info-value empty';
-            
-            // Status
-            const statusElement = document.getElementById('modalStatus');
-            if (livro.STATUS === 'EMPRESTADO') {
-                statusElement.textContent = 'Em Circulação';
-                statusElement.className = 'status-badge status-borrowed';
-            } else {
-                statusElement.textContent = 'Disponível';
-                statusElement.className = 'status-badge status-available';
+            // Fechar sidebar com botão X
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', closeSidebar);
             }
             
-            // Descrição
-            const descricaoElement = document.getElementById('modalDescricao');
-            const descricao = livro.DESCRICAO || livro.SINOPSE;
-            if (descricao && descricao.trim() !== '') {
-                descricaoElement.textContent = descricao;
-                descricaoElement.className = 'description-content';
-            } else {
-                descricaoElement.innerHTML = '<div class="text-muted" style="font-style: italic;">Nenhuma descrição disponível.</div>';
-                descricaoElement.className = 'description-content empty';
+            // Fechar sidebar com overlay
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebar);
             }
             
-            // Link para editar
-            if (livro.ISBN) {
-                document.getElementById('modalEditBtn').href = '/views/Admin/Books/editBooks.php?ISBN=' + livro.ISBN;
-            }
-            
-            // Configurar botão de excluir
-            document.getElementById('modalDeleteBtn').onclick = function() {
-                if (confirm('Tem certeza que deseja excluir este livro?')) {
-                    window.location.href = '/views/livros/excluir.php?ISBN=' + livro.ISBN;
+            // Fechar sidebar ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (mobileSidebar.classList.contains('active') && 
+                    !mobileSidebar.contains(e.target) && 
+                    e.target !== menuToggle) {
+                    closeSidebar();
                 }
-            };
+            });
             
-            // Abre o modal
-            const modal = new bootstrap.Modal(document.getElementById('bookModal'));
-            modal.show();
+            // Fechar sidebar com tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileSidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
+            });
+            
+            // Fechar sidebar ao redimensionar para desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && mobileSidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
+            });
+            
+            // SWIPE PARA ABRIR (a partir da borda da tela)
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+            
+            document.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                const swipeDistance = touchEndX - touchStartX;
+                
+                // Swipe da esquerda para direita (abrir sidebar)
+                // Só funciona se começar nos primeiros 30px da tela
+                if (touchStartX < 30 && 
+                    swipeDistance > SWIPE_THRESHOLD && 
+                    !mobileSidebar.classList.contains('active') &&
+                    window.innerWidth <= 768) {
+                    openSidebar();
+                    e.preventDefault();
+                }
+                
+                // Swipe da direita para esquerda (fechar sidebar)
+                if (mobileSidebar.classList.contains('active') && 
+                    swipeDistance < -SWIPE_THRESHOLD) {
+                    closeSidebar();
+                    e.preventDefault();
+                }
+            }, {passive: false});
+            
+            // SWIPE DENTRO DO SIDEBAR PARA FECHAR
+            mobileSidebar.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+            
+            mobileSidebar.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                const swipeDistance = touchEndX - touchStartX;
+                
+                // Swipe para esquerda dentro do sidebar para fechar
+                if (swipeDistance < -80) {
+                    closeSidebar();
+                }
+            }, {passive: true});
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const bookCards = document.querySelectorAll('.book-card');
-            
-            if (searchInput && bookCards.length > 0) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    
-                    bookCards.forEach(card => {
-                        const isbn = card.getAttribute('data-book-isbn');
-                        const livro = livros.find(l => l.ISBN === isbn);
-                        
-                        if (livro) {
-                            const title = livro.TITULO?.toLowerCase() || '';
-                            const author = livro.AUTOR?.toLowerCase() || '';
-                            const editora = livro.EDITORA?.toLowerCase() || '';
-                            const categoria = livro.GENERO?.toLowerCase() || '';
-                            
-                            if (title.includes(searchTerm) || 
-                                isbn.includes(searchTerm) || 
-                                editora.includes(searchTerm) || 
-                                author.includes(searchTerm) ||
-                                categoria.includes(searchTerm)) {
-                                card.style.display = 'block';
-                            } else {
-                                card.style.display = 'none';
-                            }
-                        }
-                    });
-                });
-            }
-            
-            // Abrir modal ao clicar no card
-            bookCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const isbn = this.getAttribute('data-book-isbn');
+        
+        // Pesquisa em tempo real
+        const searchInput = document.getElementById('searchInput');
+        const booksGrid = document.getElementById('booksGrid');
+        
+        if (searchInput && booksGrid) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const bookCards = booksGrid.querySelectorAll('.book-card');
+                
+                bookCards.forEach(card => {
+                    const isbn = card.getAttribute('data-book-isbn');
                     const livro = livros.find(l => l.ISBN === isbn);
+                    
                     if (livro) {
-                        abrirModalLivro(livro);
+                        const title = livro.TITULO?.toLowerCase() || '';
+                        const author = livro.AUTOR?.toLowerCase() || '';
+                        const genre = livro.GENERO?.toLowerCase() || '';
+                        const shouldShow = searchTerm === '' || 
+                                          title.includes(searchTerm) || 
+                                          author.includes(searchTerm) ||
+                                          genre.includes(searchTerm) ||
+                                          isbn.toLowerCase().includes(searchTerm);
+                        
+                        card.style.display = shouldShow ? 'flex' : 'none';
                     }
                 });
+            });
+        }
+        
+        // Abrir modal
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.book-actions')) return;
+                
+                const isbn = this.getAttribute('data-book-isbn');
+                const livro = livros.find(l => l.ISBN === isbn);
+                
+                if (livro) {
+                    // Preencher modal
+                    document.getElementById('modalTitle').textContent = livro.TITULO || 'Título não informado';
+                    document.getElementById('modalAuthor').textContent = livro.AUTOR || 'Autor não informado';
+                    document.getElementById('modalIsbn').textContent = livro.ISBN || 'Não informado';
+                    document.getElementById('modalPublisher').textContent = livro.EDITORA || 'Não informado';
+                    document.getElementById('modalYear').textContent = livro.ANO_PUBLICACAO || 'Não informado';
+                    document.getElementById('modalGenre').textContent = livro.GENERO || 'Não informado';
+                    document.getElementById('modalLanguage').textContent = livro.IDIOMA || 'Não informado';
+                    document.getElementById('modalPages').textContent = livro.NUMERO_PAGINAS || 'Não informado';
+                    document.getElementById('modalUnits').textContent = livro.UNIDADES || '1';
+                    document.getElementById('modalDescription').textContent = livro.DESCRICAO || 'Sinopse não disponível.';
+                    
+                    // Configurar imagem
+                    const modalCover = document.getElementById('modalCover');
+                    if (livro.IMG_LIVROS && livro.IMG_LIVROS !== '[ ]') {
+                        let caminhoImagem = livro.IMG_LIVROS;
+                        if (caminhoImagem.startsWith('/uploads/')) {
+                            caminhoImagem = '/Api' + caminhoImagem;
+                        }
+                        modalCover.src = caminhoImagem;
+                        modalCover.style.display = 'block';
+                        modalCover.alt = `Capa do livro ${livro.TITULO}`;
+                    } else {
+                        modalCover.src = '';
+                        modalCover.style.display = 'none';
+                        modalCover.parentElement.innerHTML = '<div style="width: 200px; height: 280px; background: linear-gradient(135deg, #f8f9fa, #ecf0f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #bdc3c7;"><i class="bi bi-book" style="font-size: 48px;"></i></div>';
+                    }
+                    
+                    // Configurar links
+                    document.getElementById('modalEditLink').href = `/views/Admin/Books/editBooks.php?ISBN=${livro.ISBN}`;
+                    document.getElementById('modalDeleteLink').href = `/views/Admin/Books/delBooks.php?ISBN=${livro.ISBN}`;
+                    
+                    // Configurar confirmação de exclusão
+                    document.getElementById('modalDeleteLink').onclick = function(e) {
+                        if (!confirm('Tem certeza que deseja excluir este livro?')) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    };
+                    
+                    // Abrir modal
+                    const modal = new bootstrap.Modal(document.getElementById('bookModal'));
+                    modal.show();
+                }
+            });
+        });
+        
+        // Animação suave para os cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookCards = document.querySelectorAll('.book-card');
+            bookCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
             });
         });
     </script>

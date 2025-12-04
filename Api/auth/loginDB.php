@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('../../seguranca/seguranca.php');
-require_once("../../conexao/conexao.php");
+require_once(__DIR__ . "/../../conexao/conexao.php");
 
 $teste_SenhaLogin = campo_e_valido("txtSenhaLogin", "Senha");
 $teste_EmailLogin = campo_e_valido("txtEmailLogin", "Email");

@@ -10,11 +10,11 @@ include("../../../recursos.php");
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuários - Sistema de Biblioteca</title>
+    <title>Utilizadores - Sistema de Biblioteca</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -23,150 +23,202 @@ include("../../../recursos.php");
             --secondary-color: #34495e;
             --accent-color: #3498db;
             --text-color: #2c3e50;
-            --text-light: #7f8c8d;
             --border-color: #ecf0f1;
-            --card-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            --hover-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
         }
         
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text-color);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding: 11px;
         }
         
-        .page-container {
-            max-width: 1400px;
+        .library-container {
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 1.5rem 1rem;
+            padding: 11px;
         }
         
-        .page-header {
-            margin-bottom: 2rem;
+        .library-header {
+            margin-bottom: 1.65rem;
+        }
+        
+        .library-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.33rem;
+        }
+        
+        .library-subtitle {
+            color: #7f8c8d;
+            font-size: 0.99rem;
+            margin-bottom: 1.1rem;
+        }
+        
+        .form-wrapper {
+            background: var(--white);
+            border-radius: 8.8px;
+            box-shadow: 0 2.2px 6.6px rgba(0,0,0,0.088);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 1.65rem;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.88rem;
+            margin-bottom: 1.65rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: 8.8px;
+            padding: 1.32rem;
+            box-shadow: 0 2.2px 6.6px rgba(0,0,0,0.088);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
             text-align: center;
         }
         
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4.4px 13.2px rgba(0,0,0,0.132);
         }
         
-        .page-subtitle {
-            color: var(--text-light);
-            font-size: 0.9rem;
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.44rem;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.88rem;
+            color: #7f8c8d;
+            font-weight: 500;
         }
         
         .search-container {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-        
-        .search-box {
             position: relative;
         }
         
         .search-input {
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            width: 100%;
+            padding: 0.55rem 1.32rem 0.55rem 2.64rem;
+            font-size: 0.88rem;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            background: #fafbfc;
+            border-radius: 4.4px;
+            background: var(--white);
+            transition: all 0.2s ease;
         }
         
         .search-input:focus {
+            outline: none;
             border-color: var(--accent-color);
-            background: white;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 2.2px rgba(52, 152, 219, 0.165);
         }
         
         .search-icon {
             position: absolute;
-            left: 0.75rem;
+            left: 0.88rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-light);
+            color: #7f8c8d;
+            font-size: 0.88rem;
         }
         
         .view-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
+            padding: 0.88rem;
+            background: var(--white);
+            border-radius: 8.8px;
+            border: 1px solid var(--border-color);
         }
         
         .view-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.44rem;
         }
         
         .btn-view {
-            padding: 0.4rem 0.8rem;
+            padding: 0.44rem 0.88rem;
             border: 1px solid var(--border-color);
-            background: white;
-            color: var(--text-color);
-            border-radius: 4px;
-            font-size: 0.8rem;
+            background: var(--light-bg);
+            color: #7f8c8d;
+            border-radius: 4.4px;
+            font-size: 0.825rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.33rem;
             transition: all 0.2s ease;
         }
         
         .btn-view.active {
             background: var(--primary-color);
-            color: white;
+            color: var(--white);
             border-color: var(--primary-color);
         }
         
-        .stats {
-            font-size: 0.8rem;
-            color: var(--text-light);
+        .view-stats {
+            font-size: 0.825rem;
+            color: #7f8c8d;
+            font-weight: 500;
         }
         
         /* Cards View */
         .cards-view {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.1rem;
         }
         
         .user-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.25rem;
-            box-shadow: var(--card-shadow);
+            background: var(--white);
+            border-radius: 8.8px;
+            box-shadow: 0 2.2px 6.6px rgba(0,0,0,0.088);
             border: 1px solid var(--border-color);
+            overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
         }
         
         .user-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--hover-shadow);
+            box-shadow: 0 4.4px 13.2px rgba(0,0,0,0.132);
+            border-color: var(--accent-color);
         }
         
         .user-header {
+            padding: 1.32rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 0.88rem;
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--white);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
         }
         
         .user-info h4 {
@@ -177,91 +229,117 @@ include("../../../recursos.php");
         }
         
         .user-info p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-light);
+            margin: 0.22rem 0 0 0;
+            font-size: 0.825rem;
+            color: #7f8c8d;
         }
         
         .user-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            padding: 1.32rem;
         }
         
         .detail-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
+            gap: 0.66rem;
+            margin-bottom: 0.77rem;
+            font-size: 0.825rem;
             color: var(--text-color);
         }
         
         .detail-item i {
             color: var(--accent-color);
-            width: 14px;
-            font-size: 0.7rem;
+            width: 16px;
+            font-size: 0.825rem;
         }
         
         .card-actions {
+            padding: 0.88rem 1.32rem;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 0.5rem;
+            gap: 0.44rem;
+            background: var(--light-bg);
         }
         
-        .btn-action {
+        /* Botões minimalistas */
+        .btn-minimal {
             flex: 1;
-            padding: 0.4rem 0.6rem;
+            padding: 0.44rem 0.66rem;
             border: 1px solid var(--border-color);
-            background: white;
-            color: var(--text-color);
-            border-radius: 4px;
-            font-size: 0.75rem;
-            transition: all 0.2s ease;
-            display: flex;
+            background: var(--white);
+            color: #7f8c8d;
+            border-radius: 4.4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.25rem;
+            gap: 0.33rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
         
-        .btn-action:hover {
-            background: #f8f9fa;
+        .btn-minimal:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
             border-color: var(--accent-color);
+        }
+        
+        .btn-minimal-edit:hover {
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-minimal-delete:hover {
+            color: var(--error-color);
+            border-color: var(--error-color);
         }
         
         /* List View */
         .list-view {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
+            background: var(--white);
+            border-radius: 8.8px;
+            box-shadow: 0 2.2px 6.6px rgba(0,0,0,0.088);
             border: 1px solid var(--border-color);
             overflow: hidden;
         }
         
         .list-header {
-            background: #fafbfc;
-            padding: 0.75rem 1rem;
+            background: var(--light-bg);
+            padding: 0.88rem 1.32rem;
             border-bottom: 1px solid var(--border-color);
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 1rem;
-            font-size: 0.8rem;
+            grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+            gap: 0.88rem;
+            font-size: 0.825rem;
             font-weight: 600;
             color: var(--text-color);
+            align-items: center;
+        }
+        
+        .list-header div {
+            text-align: center;
+            padding: 0.44rem;
+        }
+        
+        .list-header div:first-child {
+            text-align: left;
         }
         
         .list-item {
-            padding: 1rem;
+            padding: 0.88rem 1.32rem;
             border-bottom: 1px solid var(--border-color);
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 1rem;
+            grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+            gap: 0.88rem;
             align-items: center;
             transition: background-color 0.2s ease;
             cursor: pointer;
         }
         
         .list-item:hover {
-            background-color: #fafbfc;
+            background-color: var(--light-bg);
         }
         
         .list-item:last-child {
@@ -271,335 +349,294 @@ include("../../../recursos.php");
         .list-user {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.88rem;
+            text-align: left;
         }
         
         .list-avatar {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 0.8rem;
+            color: var(--white);
+            font-size: 0.825rem;
             font-weight: 600;
+            flex-shrink: 0;
         }
         
         .list-user-info h5 {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
+            color: var(--primary-color);
         }
         
         .list-user-info p {
-            margin: 0;
-            font-size: 0.75rem;
-            color: var(--text-light);
+            margin: 0.11rem 0 0 0;
+            font-size: 0.77rem;
+            color: #7f8c8d;
         }
         
         .list-detail {
-            font-size: 0.8rem;
+            font-size: 0.825rem;
             color: var(--text-color);
+            text-align: center;
+            padding: 0.44rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .list-actions {
             display: flex;
-            gap: 0.25rem;
+            gap: 0.44rem;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
         
-        .btn-list-action {
-            padding: 0.3rem 0.5rem;
-            border: 1px solid var(--border-color);
-            background: white;
-            color: var(--text-color);
-            border-radius: 3px;
-            font-size: 0.7rem;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-list-action:hover {
-            background: #f8f9fa;
-        }
-        
-        /* Empty State */
+        /* Estado vazio */
         .empty-state {
             text-align: center;
-            padding: 2rem 1rem;
-            color: var(--text-light);
+            padding: 3.3rem 1.1rem;
+            color: #7f8c8d;
+            grid-column: 1 / -1;
         }
         
         .empty-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.64rem;
+            margin-bottom: 0.88rem;
             opacity: 0.4;
         }
         
         .empty-text {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.88rem;
+            margin-bottom: 0.55rem;
         }
         
-        /* MODAL MELHORADO */
-        .user-modal .modal-content {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        /* Botão flutuante */
+        .fab-button {
+            position: fixed;
+            bottom: 1.65rem;
+            right: 1.65rem;
+            width: 66px;
+            height: 66px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.32rem;
+            box-shadow: 0 4.4px 13.2px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
         }
-
+        
+        .fab-button:hover {
+            transform: scale(1.05);
+            background: var(--accent-color);
+            color: var(--white);
+            box-shadow: 0 6.6px 17.6px rgba(0,0,0,0.2);
+        }
+        
+        /* Modal */
+        .user-modal .modal-content {
+            background: var(--white);
+            border: none;
+            border-radius: 8.8px;
+            box-shadow: 0 4.4px 22px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
         .user-modal .modal-header {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1.5rem 2rem;
-            border-radius: 12px 12px 0 0;
+            border: none;
+            padding: 0;
             position: relative;
         }
-
-        .user-modal .modal-header-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-        }
-
-        .user-modal .modal-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-
-        .user-modal .modal-user-info {
-            flex: 1;
-        }
-
-        .user-modal .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin: 0 0 0.25rem 0;
-        }
-
-        .user-modal .modal-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .user-modal .btn-close-custom {
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 6px;
-            color: var(--text-light);
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            transition: all 0.2s ease;
-        }
-
-        .user-modal .btn-close-custom:hover {
-            background: white;
-            color: var(--text-color);
-            transform: scale(1.1);
-        }
-
+        
         .user-modal .modal-body {
-            padding: 2rem;
+            padding: 0;
+            display: flex;
+            min-height: 350px;
         }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .info-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.25rem;
-            transition: all 0.2s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .info-header {
+        
+        .modal-cover-section {
+            flex: 0 0 250px;
+            background: var(--light-bg);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
+            justify-content: center;
+            padding: 1.65rem;
+            border-right: 1px solid var(--border-color);
         }
-
-        .info-header i {
-            color: var(--accent-color);
-            font-size: 1.1rem;
+        
+        .modal-info-section {
+            flex: 1;
+            padding: 1.65rem;
+            display: flex;
+            flex-direction: column;
         }
-
-        .info-header h6 {
-            margin: 0;
+        
+        .modal-user-avatar {
+            width: 132px;
+            height: 132px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4.4px 13.2px rgba(0,0,0,0.1);
+            border: 2.2px solid var(--accent-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2.2rem;
             font-weight: 600;
+        }
+        
+        .modal-title {
+            font-size: 1.32rem;
             color: var(--primary-color);
-            font-size: 0.9rem;
+            margin-bottom: 0.22rem;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+        
+        .modal-subtitle {
+            font-size: 0.88rem;
+            color: #7f8c8d;
+            margin-bottom: 1.32rem;
+        }
+        
+        .user-details-minimal {
+            display: flex;
+            flex-direction: column;
+            gap: 0.66rem;
+            margin-bottom: 1.32rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.88rem;
+            padding: 0.44rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            min-width: 110px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        .info-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .info-label {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-label i {
-            width: 14px;
-            font-size: 0.8rem;
-            color: #6b7280;
-        }
-
-        .info-value {
-            font-size: 0.9rem;
+        
+        .detail-value {
+            font-size: 0.825rem;
             color: var(--text-color);
-            font-weight: 500;
-            padding-left: 1.5rem;
+            flex: 1;
         }
-
-        .info-value.empty {
-            color: var(--text-light);
-            font-style: italic;
+        
+        .user-stats-minimal {
+            margin-top: auto;
         }
-
-        .stats-section {
-            background: linear-gradient(135deg, #f8fafc, #e5e7eb);
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 1rem;
+        
+        .user-stats-minimal h6 {
+            color: var(--accent-color);
+            font-size: 0.825rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.66rem;
+            font-weight: 600;
         }
-
+        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.66rem;
         }
-
+        
         .stat-item {
             text-align: center;
-            padding: 0.75rem;
+            padding: 0.66rem;
+            background: var(--light-bg);
+            border-radius: 4.4px;
+            border: 1px solid var(--border-color);
         }
-
+        
         .stat-number {
-            font-size: 1.5rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--primary-color);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.22rem;
         }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-light);
+        
+        .modal-actions-minimal {
+            display: flex;
+            gap: 0.66rem;
+            margin-top: 1.32rem;
+            padding-top: 1.32rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .btn-modal-minimal {
+            padding: 0.44rem 0.88rem;
+            border-radius: 4.4px;
             font-weight: 500;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn-modal {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 0.8rem;
             transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.33rem;
+            border: 1px solid var(--border-color);
+            background: var(--light-bg);
+            color: #7f8c8d;
         }
-
-        .btn-modal-danger {
-            background: rgba(220, 38, 38, 0.1);
-            color: #dc2626;
-            border: 1px solid rgba(220, 38, 38, 0.2);
-        }
-
-        .btn-modal-danger:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-modal-secondary {
-            background: white;
-            color: var(--text-color);
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-modal-secondary:hover {
-            background: #f8f9fa;
+        
+        .btn-modal-minimal:hover {
+            background: var(--white);
+            color: var(--primary-color);
             border-color: var(--accent-color);
         }
-
-        .btn-modal-primary {
-            background: var(--primary-color);
-            color: white;
-            border: none;
+        
+        .btn-close-custom {
+            position: absolute;
+            top: 0.88rem;
+            right: 0.88rem;
+            z-index: 10;
+            background: var(--white);
+            border-radius: 4.4px;
+            width: 33px;
+            height: 33px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            font-size: 0.88rem;
+            color: #7f8c8d;
+            transition: all 0.2s ease;
         }
-
-        .btn-modal-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+        
+        .btn-close-custom:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
         }
-
-        /* Responsividade */
+        
         @media (max-width: 768px) {
-            .page-container {
-                padding: 1rem;
+            .library-container {
+                padding: 5.5px;
+                max-width: 95%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
             }
             
             .cards-view {
@@ -608,73 +645,119 @@ include("../../../recursos.php");
             
             .list-header, .list-item {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                gap: 0.66rem;
+                text-align: left;
+            }
+            
+            .list-header div, .list-detail {
+                text-align: left;
+                justify-content: flex-start;
             }
             
             .list-actions {
-                justify-content: center;
-                margin-top: 0.5rem;
+                justify-content: flex-start;
+                margin-top: 0.44rem;
             }
             
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .user-modal .modal-header-content {
+            .user-modal .modal-body {
                 flex-direction: column;
-                text-align: center;
-                gap: 0.75rem;
+                min-height: auto;
             }
             
-            .modal-actions {
-                flex-direction: column;
-                gap: 0.75rem;
+            .modal-cover-section {
+                flex: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.32rem;
             }
             
-            .action-buttons {
-                width: 100%;
-                justify-content: space-between;
+            .modal-user-avatar {
+                width: 110px;
+                height: 110px;
+                font-size: 1.65rem;
+            }
+            
+            .modal-info-section {
+                padding: 1.32rem;
+            }
+            
+            .modal-title {
+                font-size: 1.1rem;
             }
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
-        @media (max-width: 576px) {
-            .user-modal .modal-body {
-                padding: 1.5rem 1rem;
+        
+        @media (max-width: 480px) {
+            .view-controls {
+                flex-direction: column;
+                gap: 0.66rem;
+                align-items: flex-start;
             }
             
-            .user-modal .modal-header {
-                padding: 1.25rem 1.5rem;
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.22rem;
             }
             
-            .user-modal .btn-close-custom {
-                top: 1.25rem;
-                right: 1.5rem;
+            .detail-label {
+                min-width: auto;
+            }
+            
+            .modal-actions-minimal {
+                flex-direction: column;
+            }
+            
+            .fab-button {
+                bottom: 1.1rem;
+                right: 1.1rem;
+                width: 55px;
+                height: 55px;
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="page-container">
-        <!-- Cabeçalho Minimalista -->
-        <div class="page-header">
-            <h1 class="page-title">Utilizadores</h1>
-            <p class="page-subtitle">Gerencie os utilizadores do sistema</p>
+    <div class="library-container">
+        <div class="library-header">
+            <h1 class="library-title">Gestão de Utilizadores</h1>
+            <p class="library-subtitle">Gerencie todos os utilizadores do sistema da biblioteca</p>
         </div>
-
-        <!-- Barra de Pesquisa -->
-        <div class="search-container">
-            <div class="search-box">
+        
+        <?php
+        require_once("../../../conexao/conexao.php");
+        $select = $conexao->query("SELECT * FROM UTILIZADORES ORDER BY NOME, SOBRENOME");
+        $resultado = $select->fetchAll();
+        $totalUsers = count($resultado);
+        ?>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $totalUsers; ?></div>
+                <div class="stat-label">Total de Utilizadores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $totalUsers; ?></div>
+                <div class="stat-label">Utilizadores Ativos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Com Empréstimos</div>
+            </div>
+        </div>
+        
+        <div class="form-wrapper">
+            <div class="search-container">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control search-input" id="searchInput" 
-                       placeholder="Pesquisar utilizadores por nome, sobrenome ou NIF...">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="Pesquisar utilizadores por nome, NIF ou email...">
             </div>
         </div>
 
-        <!-- Controles de Visualização -->
         <div class="view-controls">
             <div class="view-buttons">
                 <button class="btn-view active" data-view="cards">
@@ -687,21 +770,11 @@ include("../../../recursos.php");
                 </button>
             </div>
             
-            <div class="stats" id="statsInfo">
-                Carregando...
+            <div class="view-stats" id="statsInfo">
+                <?php echo $totalUsers; ?> Utilizador(es)
             </div>
         </div>
 
-        <?php
-        require_once("../../../conexao/conexao.php");
-
-        // Buscar todos os utilizadores com TODOS os dados
-        $select = $conexao->query("SELECT * FROM UTILIZADORES ORDER BY NOME, SOBRENOME");
-        $resultado = $select->fetchAll();
-        $totalUsers = count($resultado);
-        ?>
-
-        <!-- Visualização em Cards -->
         <div class="view-content" id="cardsView">
             <div class="cards-view" id="cardsContainer">
                 <?php if($resultado && count($resultado) > 0): ?>
@@ -710,7 +783,8 @@ include("../../../recursos.php");
                         $iniciais = substr($linha["NOME"], 0, 1) . substr($linha["SOBRENOME"], 0, 1);
                         $idade = calcularIdade($linha["DATA_NASCIMENTO"]);
                     ?>
-                    <div class="user-card" data-user-id="<?php echo $NIF; ?>">
+                    <div class="user-card" data-user-id="<?php echo $NIF; ?>" 
+                         data-search-text="<?php echo htmlspecialchars(strtolower($linha["NOME"] . ' ' . $linha["SOBRENOME"] . ' ' . $linha["NIF"] . ' ' . ($linha["EMAIL"] ?? ''))); ?>">
                         <div class="user-header">
                             <div class="user-avatar">
                                 <?php echo strtoupper($iniciais); ?>
@@ -737,23 +811,24 @@ include("../../../recursos.php");
                             <?php endif; ?>
                         </div>
                         <div class="card-actions">
-                            <button class="btn-action" onclick="event.stopPropagation(); editarUtilizador('<?php echo $NIF; ?>')">
+                            <a href="/views/Admin/Clients/editClients.php?NIF=<?php echo $NIF; ?>" class="btn-minimal btn-minimal-edit" onclick="event.stopPropagation()">
                                 <i class="bi bi-pencil"></i>
                                 Editar
-                            </button>
-                            <button class="btn-action" onclick="event.stopPropagation(); excluirUtilizador('<?php echo $NIF; ?>')">
+                            </a>
+                            <a href="/views/Admin/Clients/delClients.php?NIF=<?php echo $NIF; ?>" class="btn-minimal btn-minimal-delete" 
+                               onclick="event.stopPropagation(); return confirm('Tem certeza que deseja excluir este utilizador?')">
                                 <i class="bi bi-trash"></i>
                                 Excluir
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="empty-state w-100">
+                    <div class="empty-state">
                         <i class="bi bi-people empty-icon"></i>
                         <div class="empty-text">Nenhum utilizador encontrado</div>
-                        <a href="/views/Admin/Clients/addClients.php" class="btn btn-sm btn-outline-primary mt-2">
-                            <i class="bi bi-person-plus me-1"></i>
+                        <a href="/views/Admin/Clients/addClients.php" class="btn-minimal" style="margin-top: 0.55rem;">
+                            <i class="bi bi-person-plus"></i>
                             Registar utilizador
                         </a>
                     </div>
@@ -761,12 +836,12 @@ include("../../../recursos.php");
             </div>
         </div>
 
-        <!-- Visualização em Lista -->
         <div class="view-content" id="listView" style="display: none;">
             <div class="list-view" id="listContainer">
                 <div class="list-header">
                     <div>Utilizador</div>
                     <div>NIF</div>
+                    <div>Idade</div>
                     <div>Nascimento</div>
                     <div>Ações</div>
                 </div>
@@ -777,30 +852,33 @@ include("../../../recursos.php");
                         $iniciais = substr($linha["NOME"], 0, 1) . substr($linha["SOBRENOME"], 0, 1);
                         $idade = calcularIdade($linha["DATA_NASCIMENTO"]);
                     ?>
-                    <div class="list-item" data-user-id="<?php echo $NIF; ?>">
+                    <div class="list-item" data-user-id="<?php echo $NIF; ?>"
+                         data-search-text="<?php echo htmlspecialchars(strtolower($linha["NOME"] . ' ' . $linha["SOBRENOME"] . ' ' . $linha["NIF"] . ' ' . ($linha["EMAIL"] ?? ''))); ?>">
                         <div class="list-user">
                             <div class="list-avatar">
                                 <?php echo strtoupper($iniciais); ?>
                             </div>
                             <div class="list-user-info">
                                 <h5><?php echo htmlspecialchars($linha["NOME"] . " " . $linha["SOBRENOME"]); ?></h5>
-                                <p><?php echo $idade; ?> anos</p>
+                                <p><?php echo htmlspecialchars($linha["EMAIL"] ?? ''); ?></p>
                             </div>
                         </div>
                         <div class="list-detail"><?php echo htmlspecialchars($linha["NIF"]); ?></div>
+                        <div class="list-detail"><?php echo $idade; ?> anos</div>
                         <div class="list-detail"><?php echo date('d/m/Y', strtotime($linha["DATA_NASCIMENTO"])); ?></div>
                         <div class="list-actions">
-                            <button class="btn-list-action" onclick="event.stopPropagation(); editarUtilizador('<?php echo $NIF; ?>')">
+                            <a href="/views/Admin/Clients/editClients.php?NIF=<?php echo $NIF; ?>" class="btn-minimal" onclick="event.stopPropagation()">
                                 <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-list-action" onclick="event.stopPropagation(); excluirUtilizador('<?php echo $NIF; ?>')">
+                            </a>
+                            <a href="/views/Admin/Clients/delClients.php?NIF=<?php echo $NIF; ?>" class="btn-minimal" 
+                               onclick="event.stopPropagation(); return confirm('Tem certeza que deseja excluir este utilizador?')">
                                 <i class="bi bi-trash"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="empty-state">
+                    <div class="empty-state" style="padding: 1.65rem;">
                         <i class="bi bi-people empty-icon"></i>
                         <div class="empty-text">Nenhum utilizador encontrado</div>
                     </div>
@@ -809,118 +887,68 @@ include("../../../recursos.php");
         </div>
     </div>
 
-    <!-- Modal de Detalhes do Utilizador - MELHORADO -->
-    <div class="modal fade user-modal" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <a href="/views/Admin/Clients/addClients.php" class="fab-button">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+    <div class="modal fade user-modal" id="userModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <!-- Cabeçalho com gradiente -->
-                <div class="modal-header">
-                    <div class="modal-header-content">
-                        <div class="modal-avatar" id="modalAvatar"></div>
-                        <div class="modal-user-info">
-                            <h5 class="modal-title" id="modalName"></h5>
-                            <p class="modal-subtitle">
-                                <i class="bi bi-person"></i>
-                                <span id="modalAge"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Corpo do Modal -->
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
+                    <i class="bi bi-x"></i>
+                </button>
                 <div class="modal-body">
-                    <!-- Grid de Informações -->
-                    <div class="info-grid">
-                        <!-- Informações Pessoais -->
-                        <div class="info-card">
-                            <div class="info-header">
-                                <i class="bi bi-person-badge"></i>
-                                <h6>Informações Pessoais</h6>
-                            </div>
-                            <div class="info-content">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-credit-card"></i>
-                                        NIF
-                                    </div>
-                                    <div class="info-value" id="modalNIF"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-calendar-event"></i>
-                                        Data de Nascimento
-                                    </div>
-                                    <div class="info-value" id="modalBirth"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Informações de Contacto -->
-                        <div class="info-card">
-                            <div class="info-header">
-                                <i class="bi bi-telephone"></i>
-                                <h6>Contacto</h6>
-                            </div>
-                            <div class="info-content">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-envelope"></i>
-                                        E-mail
-                                    </div>
-                                    <div class="info-value" id="modalEmail"></div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-phone"></i>
-                                        Telefone
-                                    </div>
-                                    <div class="info-value" id="modalPhone"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="modal-cover-section">
+                        <div class="modal-user-avatar" id="modalAvatar"></div>
                     </div>
-
-                    <!-- Estatísticas (opcional - pode ser preenchido com dados reais se disponíveis) -->
-                    <div class="stats-section">
-                        <div class="info-header">
-                            <i class="bi bi-graph-up"></i>
+                    <div class="modal-info-section">
+                        <h4 class="modal-title" id="modalName"></h4>
+                        <p class="modal-subtitle" id="modalAge"></p>
+                        
+                        <div class="user-details-minimal">
+                            <div class="detail-row">
+                                <span class="detail-label">NIF</span>
+                                <span class="detail-value" id="modalNIF"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Data Nascimento</span>
+                                <span class="detail-value" id="modalBirth"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Email</span>
+                                <span class="detail-value" id="modalEmail"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Telefone</span>
+                                <span class="detail-value" id="modalPhone"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="user-stats-minimal">
                             <h6>Estatísticas</h6>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="modalLoans">0</div>
+                                    <div class="stat-label">Empréstimos</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number" id="modalReturns">0</div>
+                                    <div class="stat-label">Devoluções</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number" id="modalPending">0</div>
+                                    <div class="stat-label">Pendentes</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-number" id="modalLoans">0</div>
-                                <div class="stat-label">Empréstimos</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="modalReturns">0</div>
-                                <div class="stat-label">Devoluções</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="modalPending">0</div>
-                                <div class="stat-label">Pendentes</div>
-                            </div>
-                         
-                        </div>
-                    </div>
-
-                    <!-- Ações -->
-                    <div class="modal-actions">
-                        <button type="button" class="btn-modal btn-modal-danger" id="modalDeleteBtn">
-                            <i class="bi bi-trash"></i>
-                            Excluir Utilizador
-                        </button>
-                        <div class="action-buttons">
-                            <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i>
-                                Fechar
-                            </button>
-                            <button type="button" class="btn-modal btn-modal-primary" id="modalEditBtn">
-                                <i class="bi bi-pencil"></i>
-                                Editar Utilizador
-                            </button>
+                        
+                        <div class="modal-actions-minimal">
+                            <a href="#" class="btn-modal-minimal" id="modalEditLink">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a href="#" class="btn-modal-minimal" id="modalDeleteLink">
+                                <i class="bi bi-trash"></i> Excluir
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -930,12 +958,6 @@ include("../../../recursos.php");
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Dados dos utilizadores
-        const users = <?php echo json_encode($resultado); ?>;
-        
-        // Atualizar estatísticas
-        document.getElementById('statsInfo').textContent = `${users.length} Utilizador(es)`;
-        
         // Controle de visualização
         document.querySelectorAll('.btn-view').forEach(button => {
             button.addEventListener('click', function() {
@@ -945,52 +967,91 @@ include("../../../recursos.php");
                 const viewType = this.getAttribute('data-view');
                 document.getElementById('cardsView').style.display = viewType === 'cards' ? 'block' : 'none';
                 document.getElementById('listView').style.display = viewType === 'list' ? 'block' : 'none';
+                
+                // Aplicar filtro atual quando mudar de visualização
+                applySearchFilter();
             });
         });
         
-        // Filtragem automática
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+        // Elementos do DOM
+        const searchInput = document.getElementById('searchInput');
+        const statsInfo = document.getElementById('statsInfo');
+        
+        // Filtragem automática - Corrigido
+        searchInput.addEventListener('input', function() {
+            applySearchFilter();
+        });
+        
+        function applySearchFilter() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
             const userCards = document.querySelectorAll('.user-card');
             const listItems = document.querySelectorAll('.list-item');
             let visibleCount = 0;
             
             // Filtrar cards
             userCards.forEach(card => {
-                const userId = card.getAttribute('data-user-id');
-                const user = users.find(u => u.NIF === userId);
+                const searchText = card.getAttribute('data-search-text') || '';
                 
-                if (user) {
-                    const searchText = `${user.NOME} ${user.SOBRENOME} ${user.NIF} ${user.EMAIL || ''}`.toLowerCase();
-                    
-                    if (searchText.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
+                if (searchText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
                 }
             });
             
             // Filtrar lista
             listItems.forEach(item => {
-                const userId = item.getAttribute('data-user-id');
-                const user = users.find(u => u.NIF === userId);
+                const searchText = item.getAttribute('data-search-text') || '';
                 
-                if (user) {
-                    const searchText = `${user.NOME} ${user.SOBRENOME} ${user.NIF} ${user.EMAIL || ''}`.toLowerCase();
-                    
-                    if (searchText.includes(searchTerm)) {
-                        item.style.display = 'grid';
-                    } else {
-                        item.style.display = 'none';
-                    }
+                if (searchText.includes(searchTerm)) {
+                    item.style.display = 'grid';
+                } else {
+                    item.style.display = 'none';
                 }
             });
             
             // Atualizar estatísticas
-            document.getElementById('statsInfo').textContent = `${visibleCount} utilizador(es)${searchTerm ? ' encontrados' : ''}`;
-        });
+            if (searchTerm === '') {
+                statsInfo.textContent = '<?php echo $totalUsers; ?> Utilizador(es)';
+            } else {
+                statsInfo.textContent = `${visibleCount} Utilizador(es) encontrado(s)`;
+            }
+            
+            // Mostrar mensagem de "nenhum resultado" se necessário
+            showNoResultsMessage(visibleCount);
+        }
+        
+        function showNoResultsMessage(visibleCount) {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const cardsContainer = document.getElementById('cardsContainer');
+            const listContainer = document.getElementById('listContainer');
+            
+            if (visibleCount === 0 && searchTerm !== '') {
+                // Verificar se já existe uma mensagem de "nenhum resultado"
+                let noResultsMessage = cardsContainer.querySelector('.no-results-message');
+                
+                if (!noResultsMessage) {
+                    noResultsMessage = document.createElement('div');
+                    noResultsMessage.className = 'empty-state no-results-message';
+                    noResultsMessage.innerHTML = `
+                        <i class="bi bi-search empty-icon"></i>
+                        <div class="empty-text">Nenhum utilizador encontrado para "${searchTerm}"</div>
+                    `;
+                    noResultsMessage.style.gridColumn = '1 / -1';
+                    cardsContainer.appendChild(noResultsMessage);
+                    
+                    // Também adicionar à lista
+                    const listNoResults = noResultsMessage.cloneNode(true);
+                    listNoResults.className = 'empty-state no-results-message';
+                    listContainer.appendChild(listNoResults);
+                }
+            } else {
+                // Remover mensagens de "nenhum resultado"
+                const noResultsMessages = document.querySelectorAll('.no-results-message');
+                noResultsMessages.forEach(msg => msg.remove());
+            }
+        }
         
         // Abrir modal ao clicar no card/lista
         document.addEventListener('click', function(e) {
@@ -999,7 +1060,10 @@ include("../../../recursos.php");
             
             if (card || listItem) {
                 const userId = (card || listItem).getAttribute('data-user-id');
-                const user = users.find(u => u.NIF === userId);
+                
+                // Encontrar usuário nos dados PHP (simplificado - em produção, faria uma requisição AJAX)
+                const userData = <?php echo json_encode($resultado); ?>;
+                const user = userData.find(u => u.NIF === userId);
                 
                 if (user) {
                     abrirModalUtilizador(user);
@@ -1017,50 +1081,33 @@ include("../../../recursos.php");
             document.getElementById('modalName').textContent = `${user.NOME} ${user.SOBRENOME}`;
             document.getElementById('modalAge').textContent = user.DATA_NASCIMENTO ? `${idade} anos` : 'Idade não informada';
             
-            // Informações pessoais
+            // Informações detalhadas
             document.getElementById('modalNIF').textContent = user.NIF || 'Não informado';
-            document.getElementById('modalNIF').className = user.NIF ? 'info-value' : 'info-value empty';
-            
             document.getElementById('modalBirth').textContent = user.DATA_NASCIMENTO ? 
-                new Date(user.DATA_NASCIMENTO).toLocaleDateString('pt-BR') : 'Não informado';
-            document.getElementById('modalBirth').className = user.DATA_NASCIMENTO ? 'info-value' : 'info-value empty';
-            
-            // Informações de contacto
+                formatDate(user.DATA_NASCIMENTO) : 'Não informado';
             document.getElementById('modalEmail').textContent = user.EMAIL || 'Não informado';
-            document.getElementById('modalEmail').className = user.EMAIL ? 'info-value' : 'info-value empty';
-            
             document.getElementById('modalPhone').textContent = user.TELEFONE || 'Não informado';
-            document.getElementById('modalPhone').className = user.TELEFONE ? 'info-value' : 'info-value empty';
             
-            // Estatísticas (exemplo - pode ser conectado a dados reais)
-            // Aqui você pode fazer uma requisição AJAX para buscar estatísticas reais do usuário
+            // Estatísticas (exemplo)
             document.getElementById('modalLoans').textContent = Math.floor(Math.random() * 20);
             document.getElementById('modalReturns').textContent = Math.floor(Math.random() * 15);
             document.getElementById('modalPending').textContent = Math.floor(Math.random() * 5);
             
+            // Configurar links de ações
+            document.getElementById('modalEditLink').href = `/views/Admin/Clients/editClients.php?NIF=${user.NIF}`;
+            document.getElementById('modalDeleteLink').href = `/views/Admin/Clients/delClients.php?NIF=${user.NIF}`;
             
-            // Configurar botões de ação
-            document.getElementById('modalEditBtn').onclick = function() {
-                editarUtilizador(user.NIF);
-            };
-            
-            document.getElementById('modalDeleteBtn').onclick = function() {
-                excluirUtilizador(user.NIF);
+            // Configurar evento de confirmação para exclusão
+            const deleteLink = document.getElementById('modalDeleteLink');
+            const originalClick = deleteLink.onclick;
+            deleteLink.onclick = function(e) {
+                if (!confirm('Tem certeza que deseja excluir este utilizador?')) {
+                    e.preventDefault();
+                }
             };
             
             const modal = new bootstrap.Modal(document.getElementById('userModal'));
             modal.show();
-        }
-        
-        // Funções de ação
-        function editarUtilizador(NIF) {
-            window.location.href = `/views/Admin/Clients/editClients.php?NIF=${NIF}`;
-        }
-        
-        function excluirUtilizador(NIF) {
-            if (confirm('Tem certeza que deseja excluir este utilizador?')) {
-                window.location.href = `/views/Admin/Clients/delClients.php?NIF=${NIF}`;
-            }
         }
         
         // Função para calcular idade
@@ -1078,6 +1125,15 @@ include("../../../recursos.php");
             
             return idade;
         }
+        
+        // Função para formatar data
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT');
+        }
+        
+        // Inicializar filtro
+        applySearchFilter();
     </script>
 </body>
 </html>
@@ -1093,5 +1149,5 @@ function calcularIdade($dataNascimento) {
     return $idade->y;
 }
 
-include('../../layout/footer.html'); 
+include('../../../layout/footer.html'); 
 ?>

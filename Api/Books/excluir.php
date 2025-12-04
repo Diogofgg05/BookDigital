@@ -4,7 +4,7 @@ include('../../seguranca/seguranca.php');
 session_start();
 if(administrador_logado() == false) {header("location: /Digiteca/index.php"); exit;}
 
-require_once("../../conexao/conexao.php");
+require_once(__DIR__ . "/../../conexao/conexao.php");
 
 $ISBN = filter_input(INPUT_POST, "ISBN", FILTER_SANITIZE_STRING);
 
